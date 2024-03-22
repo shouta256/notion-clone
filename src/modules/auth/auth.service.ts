@@ -34,4 +34,14 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
     return token;
   }
+
+  async getUserIdFromToken(token: string): Promise<number | null> {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return decoded.userId;
+    } catch (error) {
+      console.error('Error decoding JWT token:', error);
+      return null;
+    }
+  }
 }
