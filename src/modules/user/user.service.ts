@@ -17,7 +17,6 @@ export class UserService {
   }
 
   async createUser(user: User) {
-    //パスワードをハッシュ化するようにする
     const passwordHashed = await hash(user.password, 10);
     const createdUser = await this.userRepository.save({
       ...user,
@@ -27,7 +26,11 @@ export class UserService {
   }
 
   async updateUser(user: User) {
-    const updatedUser = await this.userRepository.save(user);
+    const passwordHashed = await hash(user.password, 10);
+    const updatedUser = await this.userRepository.save({
+      ...user,
+      password: passwordHashed,
+    });
     return updatedUser;
   }
 
