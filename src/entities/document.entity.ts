@@ -6,14 +6,22 @@ export class Document {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', name: 'title' })
   title: string;
 
-  @Column({ nullable: true, default: -1 })
+  @Column({
+    type: 'int',
+    name: 'parent_document_id',
+    nullable: true,
+    default: -1,
+  })
   parentDocumentId: number;
 
-  @Column()
+  @Column({ type: 'int', name: 'user_id', default: -1 })
   userId: number;
+
+  @Column({ type: 'boolean', name: 'is_archive', default: false })
+  isArchive: boolean;
 
   @ManyToOne(() => User, (user) => user.documents)
   user: User;
