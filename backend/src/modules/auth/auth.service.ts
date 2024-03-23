@@ -18,7 +18,7 @@ export class AuthService {
   public async verifyPassword(plainTextPassword: string, userPassword: string) {
     const authenticated = await compare(plainTextPassword, userPassword);
     if (!authenticated) {
-      throw new BadRequestException('認証情報が正しくありません');
+      throw new BadRequestException('Invalid authentication credentials');
     }
   }
 
@@ -32,7 +32,7 @@ export class AuthService {
       return user;
     } catch (err) {
       console.log(err);
-      throw new BadRequestException('認証情報が正しくありません');
+      throw new BadRequestException('Invalid authentication credentials');
     }
   }
 
