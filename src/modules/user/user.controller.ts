@@ -20,7 +20,11 @@ export class UserController {
 
   @Patch('/')
   async updateUser(@Body() user: User) {
-    const updatedUser = await this.userService.updateUser(user);
-    return updatedUser;
+    if ('id' in user) {
+      const updatedUser = await this.userService.updateUser(user);
+      return updatedUser;
+    } else {
+      throw new Error('id, userName, email, password must be provided');
+    }
   }
 }
