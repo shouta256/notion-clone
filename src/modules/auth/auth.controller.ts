@@ -22,11 +22,9 @@ export class AuthController {
     return { ...user, token };
   }
 
-  //ここを追加
   @UseGuards(JwtAuthenticationGuard)
   @Get('authenticate')
   authenticate(@Req() request: RequestWithUser) {
-    // JwtStrategyのvalidateメソッドの結果がrequestオブジェクト内に追加されている
     const { user } = request;
     return user;
   }

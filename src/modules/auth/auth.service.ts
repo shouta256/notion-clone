@@ -10,6 +10,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  //ハッシュ化されたパスワードを検証する
   public async verifyPassword(plainTextPassword: string, userPassword: string) {
     const authenticated = await compare(plainTextPassword, userPassword);
     if (!authenticated) {
@@ -17,6 +18,7 @@ export class AuthService {
     }
   }
 
+  //emailとpasswordから認証を行う
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
       const user = await this.userService.getUserByEmail(email);
@@ -30,11 +32,13 @@ export class AuthService {
     }
   }
 
+  //トークンを作成
   public createToken(payload: any) {
     const token = this.jwtService.sign(payload);
     return token;
   }
 
+  //トークンからuserIdを取得する
   async getUserIdFromToken(token: string): Promise<number | null> {
     try {
       const decoded = this.jwtService.verify(token);
@@ -43,5 +47,15 @@ export class AuthService {
       console.error('Error decoding JWT token:', error);
       return null;
     }
+  }
+
+  //リクエストヘッダーからトークンを取得してuserIdを返す
+  async getUserIdFromAuthHeader(req: Request): Promise<number | null> {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+      return null;
+    }
+    const token = authHeader.split(' ')[1];
+    return this.getUserIdFromToken(token);
   }
 }
