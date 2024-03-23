@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
+import { DocumentDataDTO } from './documentDto/documentData.dto';
 
 @Injectable()
 export class DocumentService {
@@ -34,10 +35,34 @@ export class DocumentService {
   }
 
   //アーカイブされていないuserIdと一致するドキュメントを探す
-  async getDocumentsByUserId(userId: number): Promise<Document[]> {
-    return this.documentService.find({
+
+  async getDocumentsByUserId(userId: number): Promise<DocumentDataDTO[]> {
+    const documents = await this.documentService.find({
       where: { userId: userId, isArchive: false },
     });
+
+    // ドキュメントをツリー形式に変換するための再帰的な関数
+    const buildTree = (documents: Document[]): DocumentDataDTO[] => {
+      const tree: DocumentDataDTO[] = [];
+      const map: Record<number, DocumentDataDTO> = {};
+
+      documents.forEach((doc) => {
+        map[doc.id] = { id: doc.id, title: doc.title, children: [] };
+      });
+
+      documents.forEach((doc) => {
+        const parent = map[doc.parentDocumentId];
+        if (parent) {
+          parent.children.push(map[doc.id]);
+        } else {
+          tree.push(map[doc.id]);
+        }
+      });
+
+      return tree;
+    };
+
+    return buildTree(documents);
   }
 
   //parentIdに一致する子のドキュメントを探す
@@ -48,7 +73,7 @@ export class DocumentService {
       });
       return documents;
     } catch (error) {
-      throw new UnauthorizedException('ドキュメントが存在しません');
+      throw new NotFoundException('ドキュメントが存在しません');
     }
   }
 
@@ -69,8 +94,7 @@ export class DocumentService {
 
   //ドキュメントとその子を全てアーカイブする
   async moveToArchiveRecursive(documentId: number): Promise<void> {
-    // ドキュメントをアーカイブする
-    await this.moveToArchive(documentId);
+    await this.moveToArchive(documentId); // ドキュメントをアーカイブする
 
     // 子ドキュメントを取得して再帰的にアーカイブする
     const childDocuments = await this.getDocumentsByParentId(documentId);
@@ -96,13 +120,37 @@ export class DocumentService {
 
   //ドキュメントとその子を全てリストアする
   async moveToRestoreRecursive(documentId: number): Promise<void> {
-    // ドキュメントをリストアする
-    await this.moveToRestore(documentId);
+    await this.moveToRestore(documentId); // ドキュメントをリストアする
 
     // 子ドキュメントを取得して再帰的にリストアする
     const childDocuments = await this.getDocumentsByParentId(documentId);
     for (const childDocument of childDocuments) {
       await this.moveToRestoreRecursive(childDocument.id);
     }
+  }
+
+  async getArchive(userId: number): Promise<Document[]> {
+    return this.documentService.find({
+      where: { userId: userId, isArchive: true },
+    });
+  }
+
+  async deleteArchive(documentId: number): Promise<Document | null> {
+    // ドキュメントを取得
+    const documentToDelete = await this.documentService.findOne({
+      where: { id: documentId },
+    });
+
+    if (!documentToDelete) {
+      console.error('Document not found');
+      return null;
+    }
+
+    if (!documentToDelete.isArchive) {
+      throw new NotFoundException('This document is not archived');
+    }
+    await this.documentService.delete(documentId);
+
+    return documentToDelete;
   }
 }
