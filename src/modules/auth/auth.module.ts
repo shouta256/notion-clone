@@ -12,7 +12,6 @@ import { LocalStorategy } from './local.strategy';
     UserModule,
     ConfigModule,
     JwtModule.registerAsync({
-      //追加
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -26,5 +25,6 @@ import { LocalStorategy } from './local.strategy';
   controllers: [AuthController],
   //JwtStrategyを追加
   providers: [AuthService, LocalStorategy, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}
