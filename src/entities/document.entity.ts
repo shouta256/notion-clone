@@ -17,7 +17,7 @@ export class Document {
   })
   parentDocumentId: number;
 
-  @Column({ type: 'int', name: 'user_id', default: -1 })
+  @Column({ type: 'int', default: -1 })
   userId: number;
 
   @Column({ type: 'boolean', name: 'is_archive', default: false })
