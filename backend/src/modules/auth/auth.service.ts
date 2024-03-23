@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { UserService } from '../user/user.service';
@@ -44,16 +48,15 @@ export class AuthService {
       const decoded = this.jwtService.verify(token);
       return decoded.userId;
     } catch (error) {
-      console.error('Error decoding JWT token:', error);
-      return null;
+      throw new Error('Invalid token format');
     }
   }
 
   //リクエストヘッダーからトークンを取得してuserIdを返す
-  async getUserIdFromAuthHeader(req: Request): Promise<number | null> {
+  async getUserIdFromAuthHeader(req: Request): Promise<number> {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
-      return null;
+      throw new NotFoundException('Authorization header is missing');
     }
     const token = authHeader.split(' ')[1];
     return this.getUserIdFromToken(token);

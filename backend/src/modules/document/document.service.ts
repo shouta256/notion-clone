@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
@@ -25,7 +30,7 @@ export class DocumentService {
       where: { id: updatedDocumentData.id },
     });
     if (!documentToUpdate) {
-      return null;
+      throw new NotFoundException('Document not found');
     }
 
     Object.assign(documentToUpdate, updatedDocumentData);
@@ -35,11 +40,14 @@ export class DocumentService {
   }
 
   //アーカイブされていないuserIdと一致するドキュメントを探す
-
   async getDocumentsByUserId(userId: number): Promise<DocumentDataDTO[]> {
     const documents = await this.documentService.find({
       where: { userId: userId, isArchive: false },
     });
+
+    if (!documents) {
+      throw new NotFoundException('Document not found');
+    }
 
     // ドキュメントをツリー形式に変換するための再帰的な関数
     const buildTree = (documents: Document[]): DocumentDataDTO[] => {
@@ -67,14 +75,15 @@ export class DocumentService {
 
   //parentIdに一致する子のドキュメントを探す
   async getDocumentsByParentId(parentDocumentId: number): Promise<Document[]> {
-    try {
-      const documents = await this.documentService.find({
-        where: { parentDocumentId: parentDocumentId },
-      });
-      return documents;
-    } catch (error) {
-      throw new NotFoundException('ドキュメントが存在しません');
+    const documents = await this.documentService.find({
+      where: { parentDocumentId: parentDocumentId },
+    });
+
+    if (!documents) {
+      throw new NotFoundException('Document not found');
     }
+
+    return documents;
   }
 
   //ドキュメントをアーカイブする
@@ -82,8 +91,9 @@ export class DocumentService {
     const document = await this.documentService.findOne({
       where: { id: documentId },
     });
+
     if (!document) {
-      return null; // ドキュメントが見つからない場合は null を返す
+      throw new NotFoundException('Document not found');
     }
 
     document.isArchive = true; // ドキュメントをアーカイブする
@@ -108,8 +118,9 @@ export class DocumentService {
     const document = await this.documentService.findOne({
       where: { id: documentId },
     });
+
     if (!document) {
-      return null;
+      throw new NotFoundException('Document not found');
     }
 
     document.isArchive = false;
@@ -129,28 +140,36 @@ export class DocumentService {
     }
   }
 
+  //アーカイブのドキュメントを取得
   async getArchive(userId: number): Promise<Document[]> {
     return this.documentService.find({
       where: { userId: userId, isArchive: true },
     });
   }
 
+  //アーカイブのドキュメントを削除
   async deleteArchive(documentId: number): Promise<Document | null> {
-    // ドキュメントを取得
-    const documentToDelete = await this.documentService.findOne({
-      where: { id: documentId },
-    });
+    try {
+      const documentToDelete = await this.documentService.findOne({
+        where: { id: documentId },
+      });
 
-    if (!documentToDelete) {
-      console.error('Document not found');
-      return null;
+      if (!documentToDelete) {
+        throw new NotFoundException('Document not found');
+      }
+
+      if (!documentToDelete.isArchive) {
+        throw new BadRequestException('This document is not archived');
+      }
+
+      await this.documentService.delete(documentId);
+
+      return documentToDelete;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to delete document',
+        error.message,
+      );
     }
-
-    if (!documentToDelete.isArchive) {
-      throw new NotFoundException('This document is not archived');
-    }
-    await this.documentService.delete(documentId);
-
-    return documentToDelete;
   }
 }
