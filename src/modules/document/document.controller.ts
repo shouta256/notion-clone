@@ -55,12 +55,32 @@ export class DocumentController {
   @Get('getChildren/:parentDocumentId?')
   async getChildByParentId(
     @Param('parentDocumentId') parentDocumentId: number,
-    @Request() req: Request,
   ): Promise<Document[] | number> {
+    return this.documentService.getDocumentsByParentId(parentDocumentId);
+  }
+
+  //ドキュメントとその子を全てアーカイブする
+  @Patch('archive/:documentId')
+  async moveToArchive(
+    @Param('documentId') documentId: number,
+    @Request() req: Request,
+  ): Promise<Document[]> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
-    return this.documentService.getDocumentsByUserIdAndParentId(
-      userId,
-      parentDocumentId,
-    );
+
+    await this.documentService.moveToArchiveRecursive(documentId);
+
+    return await this.documentService.getDocumentsByUserId(userId);
+  }
+
+  //ドキュメントとその子を全てリストアする
+  @Patch('restore/:documentId')
+  async moveToRecover(
+    @Param('documentId') documentId: number,
+    @Request() req: Request,
+  ): Promise<Document[]> {
+    const userId = await this.authService.getUserIdFromAuthHeader(req);
+    await this.documentService.moveToRestoreRecursive(documentId);
+
+    return await this.documentService.getDocumentsByUserId(userId);
   }
 }

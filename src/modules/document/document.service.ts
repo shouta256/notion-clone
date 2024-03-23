@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
 import { Repository } from 'typeorm';
@@ -41,18 +41,68 @@ export class DocumentService {
   }
 
   //parentIdに一致する子のドキュメントを探す
-  async getDocumentsByUserIdAndParentId(
-    userId: number,
-    parentDocumentId: number,
-  ): Promise<Document[] | number> {
+  async getDocumentsByParentId(parentDocumentId: number): Promise<Document[]> {
     try {
       const documents = await this.documentService.find({
-        where: { userId, parentDocumentId },
+        where: { parentDocumentId: parentDocumentId },
       });
       return documents;
     } catch (error) {
-      console.error('Error fetching documents:', error);
-      return 500;
+      throw new UnauthorizedException('ドキュメントが存在しません');
+    }
+  }
+
+  //ドキュメントをアーカイブする
+  async moveToArchive(documentId: number): Promise<Document | null> {
+    const document = await this.documentService.findOne({
+      where: { id: documentId },
+    });
+    if (!document) {
+      return null; // ドキュメントが見つからない場合は null を返す
+    }
+
+    document.isArchive = true; // ドキュメントをアーカイブする
+    const archivedDocument = await this.documentService.save(document); // ドキュメントを保存して返す
+
+    return archivedDocument;
+  }
+
+  //ドキュメントとその子を全てアーカイブする
+  async moveToArchiveRecursive(documentId: number): Promise<void> {
+    // ドキュメントをアーカイブする
+    await this.moveToArchive(documentId);
+
+    // 子ドキュメントを取得して再帰的にアーカイブする
+    const childDocuments = await this.getDocumentsByParentId(documentId);
+    for (const childDocument of childDocuments) {
+      await this.moveToArchiveRecursive(childDocument.id);
+    }
+  }
+
+  //ドキュメントをリストアする
+  async moveToRestore(documentId: number): Promise<Document | null> {
+    const document = await this.documentService.findOne({
+      where: { id: documentId },
+    });
+    if (!document) {
+      return null;
+    }
+
+    document.isArchive = false;
+    const archivedDocument = await this.documentService.save(document);
+
+    return archivedDocument;
+  }
+
+  //ドキュメントとその子を全てリストアする
+  async moveToRestoreRecursive(documentId: number): Promise<void> {
+    // ドキュメントをリストアする
+    await this.moveToRestore(documentId);
+
+    // 子ドキュメントを取得して再帰的にリストアする
+    const childDocuments = await this.getDocumentsByParentId(documentId);
+    for (const childDocument of childDocuments) {
+      await this.moveToRestoreRecursive(childDocument.id);
     }
   }
 }
