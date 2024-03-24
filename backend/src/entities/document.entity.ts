@@ -23,6 +23,9 @@ export class Document {
   @Column({ type: 'boolean', name: 'is_archive', default: false })
   isArchive: boolean;
 
+  @Column({ type: 'json', nullable: true })
+  content: any | null;
+
   @ManyToOne(() => User, (user) => user.documents)
   user: User;
 }
