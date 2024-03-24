@@ -41,7 +41,15 @@ export class DocumentController {
     return await this.documentService.updateDocument(documentToUpdate);
   }
 
-  //userIdからドキュメントを取得
+  //ドキュメントIdからドキュメントを取得
+  @Get('/:documentId')
+  async getDocumentByDocumentId(
+    @Param('documentId') documentId: number,
+  ): Promise<Document> {
+    return this.documentService.getDocumentByDocumentId(documentId);
+  }
+
+  //userIdからドキュメントを階層構造で取得
   @Get('/')
   async getDocumentsByUserId(
     @Request() req: Request,

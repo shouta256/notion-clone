@@ -43,7 +43,20 @@ export class DocumentService {
     }
   }
 
-  //アーカイブされていないuserIdと一致するドキュメントを探す
+  //ドキュメントIdからドキュメントを取得する
+  async getDocumentByDocumentId(documentId: number): Promise<Document> {
+    const document = await this.documentService.findOne({
+      where: { id: documentId },
+    });
+
+    if (!document) {
+      throw new NotFoundException('Document not found');
+    }
+
+    return document;
+  }
+
+  //アーカイブされていないuserIdと一致するドキュメントを探し、階層構造で渡す
   async getDocumentsByUserId(userId: number): Promise<DocumentDataDTO[]> {
     const documents = await this.documentService.find({
       where: { userId: userId, isArchive: false },
