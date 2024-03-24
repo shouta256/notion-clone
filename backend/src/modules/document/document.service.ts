@@ -25,18 +25,22 @@ export class DocumentService {
   // ドキュメントを更新する
   async updateDocument(
     updatedDocumentData: Partial<Document>,
-  ): Promise<Document | null> {
-    const documentToUpdate = await this.documentService.findOne({
-      where: { id: updatedDocumentData.id },
-    });
-    if (!documentToUpdate) {
-      throw new NotFoundException('Document not found');
+  ): Promise<Document> {
+    if ('id' in updatedDocumentData) {
+      const documentToUpdate = await this.documentService.findOne({
+        where: { id: updatedDocumentData.id },
+      });
+      if (!documentToUpdate) {
+        throw new NotFoundException('Document not found');
+      }
+
+      Object.assign(documentToUpdate, updatedDocumentData);
+
+      const updatedDocument = await this.documentService.save(documentToUpdate);
+      return updatedDocument;
+    } else {
+      throw new Error('id must be provided');
     }
-
-    Object.assign(documentToUpdate, updatedDocumentData);
-
-    const updatedDocument = await this.documentService.save(documentToUpdate);
-    return updatedDocument;
   }
 
   //アーカイブされていないuserIdと一致するドキュメントを探す
@@ -87,7 +91,7 @@ export class DocumentService {
   }
 
   //ドキュメントをアーカイブする
-  async moveToArchive(documentId: number): Promise<Document | null> {
+  async moveToArchive(documentId: number): Promise<Document> {
     const document = await this.documentService.findOne({
       where: { id: documentId },
     });
@@ -114,7 +118,7 @@ export class DocumentService {
   }
 
   //ドキュメントをリストアする
-  async moveToRestore(documentId: number): Promise<Document | null> {
+  async moveToRestore(documentId: number): Promise<Document> {
     const document = await this.documentService.findOne({
       where: { id: documentId },
     });
@@ -148,7 +152,7 @@ export class DocumentService {
   }
 
   //アーカイブのドキュメントを削除
-  async deleteArchive(documentId: number): Promise<Document | null> {
+  async deleteArchive(documentId: number): Promise<Document> {
     try {
       const documentToDelete = await this.documentService.findOne({
         where: { id: documentId },
