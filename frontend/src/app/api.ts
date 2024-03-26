@@ -1,5 +1,7 @@
+import { ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js';
 import axios from 'axios';
 import { UserData } from './type';
+import { use } from 'react';
 
 const axiosInstance = axios.create({ baseURL: 'http://localhost:8080' });
 
@@ -24,4 +26,17 @@ export const signUp = async (
     password: response.data.password,
   };
   return login(loginData.email, loginData.password);
+};
+
+export const getUser = async (token: string): Promise<UserData> => {
+  const userIdResponse = await axiosInstance.get('auth/userId', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const userId = userIdResponse.data;
+
+  const user = await axiosInstance.get(`user/${userId}`);
+
+  return user.data;
 };
