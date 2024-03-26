@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { AuthService } from './auth.service';
 import JwtAuthenticationGuard from './jwtAuthentication.guard';
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
-import { Request } from 'express';
 
 interface RequestWithUser extends Request {
   user: User;
@@ -27,5 +26,11 @@ export class AuthController {
   authenticate(@Req() request: RequestWithUser) {
     const { user } = request;
     return user;
+  }
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('userId')
+  getUserIdByAuthHeader(@Request() req: Request) {
+    return this.authService.getUserIdFromAuthHeader(req);
   }
 }
