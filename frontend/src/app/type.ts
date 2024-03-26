@@ -7,3 +7,12 @@ export interface UserData {
   updatedAt: Date;
   token: string;
 }
+
+export interface Document {
+  id: number;
+  title: string;
+  parentDocumentId: number;
+  idArchive: boolean;
+  userId: number;
+  content: JSON;
+}
