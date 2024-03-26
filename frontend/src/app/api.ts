@@ -11,3 +11,17 @@ export const login = async (
   const response = await axiosInstance.post('/auth/login', inputData);
   return response.data;
 };
+
+export const signUp = async (
+  userName: string,
+  email: string,
+  password: string
+): Promise<UserData> => {
+  const inputData = { userName: userName, email: email, password: password };
+  const response = await axiosInstance.post('user', inputData);
+  const loginData = {
+    email: response.data.email,
+    password: response.data.password,
+  };
+  return login(loginData.email, loginData.password);
+};
