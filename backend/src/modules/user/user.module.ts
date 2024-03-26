@@ -6,7 +6,6 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
 @Module({
-  //この行を追加
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [UserService],

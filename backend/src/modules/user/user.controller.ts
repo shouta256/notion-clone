@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Param } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { UserService } from './user.service';
 
@@ -10,6 +10,10 @@ export class UserController {
   async getUsers() {
     const users = await this.userService.getUsers();
     return users;
+  }
+  @Get('/:id')
+  async getUserByToken(@Param('id') id: number) {
+    return this.userService.getById(id);
   }
 
   @Post('/')
