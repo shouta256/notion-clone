@@ -1,26 +1,31 @@
-import { getUser } from '@/app/api';
-import { UserData } from '@/app/type';
+import { getDocuments, getUser } from '@/app/api';
+import { NestedDocuments, UserData } from '@/app/type';
 import { Box, Flex, VStack, Text, Spacer, IconButton } from '@chakra-ui/react';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NewpageButton } from './newpageButton';
+import { useQuery } from 'react-query';
+import { DocumentList } from './documentList';
 
 const Sidebar = () => {
-  const token = localStorage.getItem('token');
-  const [user, setUser] = useState<UserData>();
+  const [token, setToken] = useState('');
+  const userQueryResult = useQuery('user', () => getUser(token), {
+    enabled: !!token,
+  });
+  const { data: user, isLoading } = userQueryResult;
+
+  const documentsQueryResult = useQuery<NestedDocuments[] | undefined>(
+    'documentList',
+    () => getDocuments()
+  );
+  const { data: documents } = documentsQueryResult;
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        redirect('/');
-      }
-      const user = await getUser(token);
-      setUser(user);
-      console.log('取得したuser:', user);
-    };
-
-    fetchUserData();
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      redirect('/');
+    }
+    setToken(storedToken);
   }, []);
 
   return (
@@ -36,14 +41,18 @@ const Sidebar = () => {
       left='0'
     >
       <VStack spacing='4' align='stretch'>
-        <Text fontSize='xl' fontWeight={500}>
-          {user?.userName}&rsquo;s notion
-        </Text>
+        {isLoading ? (
+          <Text fontSize='xl' fontWeight={500}>
+            ...loading
+          </Text>
+        ) : (
+          <Text fontSize='xl' fontWeight={500}>
+            {user?.userName}&rsquo;s notion
+          </Text>
+        )}
 
         <NewpageButton />
-        <Text>Menu Item 1</Text>
-        <Text>Menu Item 2</Text>
-        <Text>Menu Item 3</Text>
+        <DocumentList documents={documents!} />
       </VStack>
     </Box>
   );
