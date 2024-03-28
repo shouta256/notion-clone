@@ -8,6 +8,7 @@ import {
   Request,
   Patch,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { DocumentService } from './document.service';
 import { Document } from 'src/entities/document.entity';
@@ -16,7 +17,6 @@ import { AuthService } from '../auth/auth.service';
 import { DocumentDataDTO } from './documentDto/documentData.dto';
 
 @Controller('document')
-@UseGuards(AuthGuard('jwt'))
 export class DocumentController {
   constructor(
     private readonly documentService: DocumentService,
@@ -34,9 +34,8 @@ export class DocumentController {
 
   //ドキュメントを更新
   @Patch('/')
-  async updateDocument(@Body() document: Document, @Request() req: Request) {
-    const userId = await this.authService.getUserIdFromAuthHeader(req);
-    const documentToUpdate = { ...document, userId: userId };
+  async updateDocument(@Body() document: Document) {
+    const documentToUpdate = { ...document };
 
     return await this.documentService.updateDocument(documentToUpdate);
   }
@@ -77,16 +76,13 @@ export class DocumentController {
   }
 
   //ドキュメントとその子を全てアーカイブする
-  @Patch('archive/:documentId')
+  @Put('archive/:documentId')
   async moveToArchive(
     @Param('documentId') documentId: number,
-    @Request() req: Request,
-  ): Promise<DocumentDataDTO[]> {
-    const userId = await this.authService.getUserIdFromAuthHeader(req);
-
+  ): Promise<DocumentDataDTO> {
     await this.documentService.moveToArchiveRecursive(documentId);
 
-    return await this.documentService.getDocumentsByUserId(userId);
+    return await this.documentService.getDocumentByDocumentId(documentId);
   }
 
   @Delete('archive/:documentId')
