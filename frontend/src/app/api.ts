@@ -44,7 +44,7 @@ export const getUser = async (token: string): Promise<UserData> => {
 export const createDocument = async (
   title: string,
   parentDocumentId?: number
-): Promise<Document> => {
+): Promise<DocumentType> => {
   const token = localStorage.getItem('token');
   const requestBody = { title: title, parentDocumentId: parentDocumentId };
   const config = {
@@ -55,6 +55,18 @@ export const createDocument = async (
   const document = await axiosInstance.post('document', requestBody, config);
 
   return document.data;
+};
+
+export const updateDocument = async (
+  documentId: number,
+  title?: string,
+  content?: JSON
+): Promise<DocumentType> => {
+  const requestBody = { id: documentId, title: title, content: content };
+  console.log('documentIdは', documentId);
+
+  const response = await axiosInstance.patch(`document`, requestBody);
+  return response.data;
 };
 
 export const getDocuments = async (): Promise<NestedDocuments[]> => {
