@@ -88,3 +88,11 @@ export const moveToArchive = async (
 
   return response.data;
 };
+
+export const getDocumentById = async (
+  documentId: number
+): Promise<DocumentType> => {
+  const document = await axiosInstance.get(`document/${documentId}`);
+
+  return document.data;
+};
