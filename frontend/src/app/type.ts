@@ -8,11 +8,17 @@ export interface UserData {
   token: string;
 }
 
-export interface Document {
+export interface DocumentType {
   id: number;
   title: string;
   parentDocumentId: number;
   idArchive: boolean;
   userId: number;
   content: JSON;
+}
+
+export interface NestedDocuments {
+  id: number;
+  title: string;
+  children: NestedDocuments[];
 }
