@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { NestedDocuments, UserData } from './type';
+import { DocumentType, NestedDocuments, UserData } from './type';
 
 const axiosInstance = axios.create({ baseURL: 'http://localhost:8080' });
 
@@ -57,7 +57,7 @@ export const createDocument = async (
   return document.data;
 };
 
-export const getDocuments = async (): Promise<NestedDocuments> => {
+export const getDocuments = async (): Promise<NestedDocuments[]> => {
   const token = localStorage.getItem('token');
   const config = {
     headers: {
@@ -68,4 +68,23 @@ export const getDocuments = async (): Promise<NestedDocuments> => {
   const documents = await axiosInstance.get('document', config);
 
   return documents.data;
+};
+
+export const moveToArchive = async (
+  documentId: number
+): Promise<DocumentType> => {
+  const token = localStorage.getItem('token');
+  console.log('Tokenは', token);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axiosInstance.put(
+    `document/archive/${documentId}`,
+    config
+  );
+  console.log('レスポンス：', response.data);
+
+  return response.data;
 };
