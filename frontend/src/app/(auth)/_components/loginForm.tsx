@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import InputField from './inputField';
+import { InputField } from './inputField';
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
