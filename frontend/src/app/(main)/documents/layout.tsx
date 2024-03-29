@@ -1,7 +1,5 @@
 'use client';
 
-import { useAuth } from '@/app/hooks/useAuth';
-import { redirect } from 'next/navigation';
 import { Box, Flex } from '@chakra-ui/react';
 import Sidebar from './_componets/sidebar';
 
