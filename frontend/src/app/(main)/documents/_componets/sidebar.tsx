@@ -8,7 +8,7 @@ import { useQuery } from 'react-query';
 import { DocumentList } from './documentList';
 import { Profile } from './profile';
 
-const Sidebar = () => {
+export const Sidebar = () => {
   const [token, setToken] = useState('');
   const userQueryResult = useQuery('user', () => getUser(token), {
     enabled: !!token,
@@ -52,5 +52,3 @@ const Sidebar = () => {
     </Box>
   );
 };
-
-export default Sidebar;

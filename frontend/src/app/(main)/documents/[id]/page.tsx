@@ -9,7 +9,7 @@ import { useParams } from 'next/navigation';
 import React from 'react';
 import { useQuery } from 'react-query';
 
-const DocumentPage = () => {
+export default function DocumentPage() {
   const param = useParams();
   const documentId = parseInt(
     Array.isArray(param.id) ? param.id[0] : param.id,
@@ -37,6 +37,4 @@ const DocumentPage = () => {
       <Editor documentId={documentId} initialContent={document?.content} />
     </Box>
   );
-};
-
-export default DocumentPage;
+}
