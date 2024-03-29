@@ -1,13 +1,17 @@
-import { NestedDocuments } from '@/app/type';
 import { useState } from 'react';
-import { Item } from './item';
 import { useRouter } from 'next/navigation';
 
+import { NestedDocuments } from '@/app/type';
+
+import { Item } from './item';
+
+//ドキュメントの階層構造を再帰的に表示するコンポーネント
 export const DocumentList: React.FC<{ documents: NestedDocuments[] }> = ({
   documents,
 }) => {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const router = useRouter();
+
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const onRedirect = (documentId: number) => {
     router.push(`/documents/${documentId}`);

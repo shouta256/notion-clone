@@ -1,8 +1,11 @@
-import { Flex, Button, Icon } from '@chakra-ui/react';
+import { Button, Icon } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { createDocument } from '@/app/api';
+
 import { useMutation, useQueryClient } from 'react-query';
 
+import { createDocument } from '@/app/api';
+
+//サイドバーに表示する新規ページのボタンコンポーネント
 export const NewpageButton = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(() => createDocument('Untitle'), {
@@ -10,6 +13,7 @@ export const NewpageButton = () => {
       queryClient.invalidateQueries('documentList');
     },
   });
+
   const handleOnclick = async () => {
     await mutation.mutateAsync();
   };

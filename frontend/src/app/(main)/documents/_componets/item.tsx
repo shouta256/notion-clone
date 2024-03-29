@@ -1,7 +1,9 @@
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+
 import { useMutation, useQueryClient } from 'react-query';
 import { createDocument } from '@/app/api';
+
 import { Menu } from './menu';
 
 interface ItemProps {
@@ -12,6 +14,8 @@ interface ItemProps {
   setExpanded: (expanded: boolean) => void;
 }
 
+//各ドキュメントのtitleを表示する
+//サイドバーで使用する
 export const Item: React.FC<ItemProps> = ({
   title,
   documentId,

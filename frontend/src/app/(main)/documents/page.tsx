@@ -1,12 +1,15 @@
 'use client';
 
-import { createDocument } from '@/app/api';
-import { AddIcon } from '@chakra-ui/icons';
 import { Box, Button, Center, Heading, Icon } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 
+import { createDocument } from '@/app/api';
+
+//ユーザがドキュメントを持っていないときに表示されるページ
+//新規ドキュメントを作成できる
 export default function DocumentsPage() {
   const router = useRouter();
 

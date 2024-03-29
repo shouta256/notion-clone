@@ -1,4 +1,3 @@
-import { createDocument, moveToArchive } from '@/app/api';
 import {
   Popover,
   PopoverArrow,
@@ -8,14 +7,19 @@ import {
   PopoverTrigger,
   Text,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
+
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
+
+import { moveToArchive } from '@/app/api';
 
 interface MenuProps {
   documentId: number;
 }
 
+//ドキュメントの削除を行うボタンコンポーネント
+//itemで使用する
 export const Menu: React.FC<MenuProps> = ({ documentId }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 

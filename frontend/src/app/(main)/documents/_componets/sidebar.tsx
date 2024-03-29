@@ -1,20 +1,27 @@
-import { getDocuments, getUser } from '@/app/api';
-import { NestedDocuments, UserData } from '@/app/type';
-import { Box, Flex, VStack, Text, Spacer, IconButton } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
+
 import { redirect } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { NewpageButton } from './newpageButton';
 import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
+
+import { getDocuments, getUser } from '@/app/api';
+import { NestedDocuments } from '@/app/type';
+
+import { NewpageButton } from './newpageButton';
 import { DocumentList } from './documentList';
 import { Profile } from './profile';
 
+//ユーザ名、ドキュメントの階層を表示するコンポーネント
 export const Sidebar = () => {
   const [token, setToken] = useState('');
+
+  //トークンからユーザを取得
   const userQueryResult = useQuery('user', () => getUser(token), {
     enabled: !!token,
   });
   const { data: user, isLoading } = userQueryResult;
 
+  //ドキュメントを取得
   const documentsQueryResult = useQuery<NestedDocuments[] | undefined>(
     'documentList',
     () => getDocuments()

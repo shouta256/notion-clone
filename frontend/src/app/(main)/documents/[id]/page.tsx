@@ -1,14 +1,17 @@
 'use client';
 
-import { getDocumentById } from '@/app/api';
-import { DocumentType } from '@/app/type';
-import { Editor } from '@/components/editor';
-import { DocumentTitle } from '@/components/documentTitle';
 import { Box } from '@chakra-ui/react';
+
 import { useParams } from 'next/navigation';
-import React from 'react';
 import { useQuery } from 'react-query';
 
+import { getDocumentById } from '@/app/api';
+import { DocumentType } from '@/app/type';
+
+import { DocumentTitle } from '@/components/documentTitle';
+import { Editor } from '@/components/editor';
+
+//各ドキュメントを表示するページ
 export default function DocumentPage() {
   const param = useParams();
   const documentId = parseInt(

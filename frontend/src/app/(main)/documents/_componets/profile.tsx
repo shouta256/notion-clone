@@ -9,6 +9,7 @@ import {
   PopoverTrigger,
   Text,
 } from '@chakra-ui/react';
+
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -16,9 +17,13 @@ interface ProfileProps {
   userName: string;
 }
 
+//ユーザ名の表示とログアウトをするコンポーネント
 export const Profile = ({ userName }: ProfileProps) => {
   const router = useRouter();
+
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  //ログアウトメソッド
   const handleLogOutClick = () => {
     localStorage.setItem('token', '');
     router.push('/');

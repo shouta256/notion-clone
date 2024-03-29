@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Flex } from '@chakra-ui/react';
+
 import { Sidebar } from './_componets/sidebar';
 
 export default function MainLayout({
