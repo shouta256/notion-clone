@@ -6,8 +6,9 @@ import {
   InputRightElement,
   Button,
 } from '@chakra-ui/react';
-import { ChangeEvent, useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+
+import { ChangeEvent, useState } from 'react';
 
 interface InputFieldProps {
   label: string;
@@ -17,6 +18,7 @@ interface InputFieldProps {
   placeholder: string;
 }
 
+//inputのデザインを共通化するためのコンポーネント
 export const InputField = ({
   label,
   type,
@@ -30,6 +32,7 @@ export const InputField = ({
     onChange(e);
   };
 
+  //パスワード表示・非表示の切り替え
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };

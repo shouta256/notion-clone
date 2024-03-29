@@ -1,16 +1,9 @@
 'use client';
 
-import {
-  Flex,
-  Input,
-  Button,
-  FormControl,
-  FormLabel,
-  Stack,
-  Heading,
-  Text,
-} from '@chakra-ui/react';
+import { Flex, Button, Stack, Heading, Text } from '@chakra-ui/react';
+
 import { useState } from 'react';
+
 import { InputField } from './inputField';
 
 interface LoginFormProps {
@@ -18,14 +11,15 @@ interface LoginFormProps {
   onSwitchToSignup: () => void;
 }
 
+//ログイン用のコンポーネント
 export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
   onSwitchToSignup,
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
   const handleLogin = async () => {
