@@ -13,10 +13,7 @@ export default function Auth() {
 
   const handleLogin = async (email: string, password: string) => {
     const user = await login(email, password);
-    console.log('ログイン成功:', user);
-    console.log('ユーザID', user.id);
     localStorage.setItem('token', user.token);
-    console.log('tokenは', localStorage.getItem('token'));
     router.push('/documents');
   };
 
@@ -26,10 +23,7 @@ export default function Auth() {
     password: string
   ) => {
     const newUser = await signUp(userName, email, password);
-    console.log('サインアップ成功:', newUser);
-    console.log('ユーザID', newUser.id);
     localStorage.setItem('token', newUser.token);
-    console.log('tokenは', localStorage.getItem('token'));
     router.push('/documents');
   };
 

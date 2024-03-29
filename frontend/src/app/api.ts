@@ -27,8 +27,6 @@ export const signUp = async (
 };
 
 export const getUser = async (token: string): Promise<UserData> => {
-  console.log('トークンは', token);
-
   const userIdResponse = await axiosInstance.get('auth/userId', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -63,7 +61,6 @@ export const updateDocument = async (
   content?: JSON
 ): Promise<DocumentType> => {
   const requestBody = { id: documentId, title: title, content: content };
-  console.log('documentIdは', documentId);
 
   const response = await axiosInstance.patch(`document`, requestBody);
   return response.data;
@@ -86,7 +83,6 @@ export const moveToArchive = async (
   documentId: number
 ): Promise<DocumentType> => {
   const token = localStorage.getItem('token');
-  console.log('Tokenは', token);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -96,7 +92,6 @@ export const moveToArchive = async (
     `document/archive/${documentId}`,
     config
   );
-  console.log('レスポンス：', response.data);
 
   return response.data;
 };

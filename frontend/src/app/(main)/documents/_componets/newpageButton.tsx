@@ -7,11 +7,10 @@ export const NewpageButton = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(() => createDocument('Untitle'), {
     onSuccess: () => {
-      queryClient.invalidateQueries('document');
+      queryClient.invalidateQueries('documentList');
     },
   });
   const handleOnclick = async () => {
-    console.log('押された');
     await mutation.mutateAsync();
   };
 
