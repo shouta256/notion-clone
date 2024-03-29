@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { NewpageButton } from './newpageButton';
 import { useQuery } from 'react-query';
 import { DocumentList } from './documentList';
+import { Profile } from './profile';
 
 const Sidebar = () => {
   const [token, setToken] = useState('');
@@ -41,18 +42,12 @@ const Sidebar = () => {
       left='0'
     >
       <VStack spacing='4' align='stretch'>
-        {isLoading ? (
-          <Text fontSize='xl' fontWeight={500}>
-            ...loading
-          </Text>
-        ) : (
-          <Text fontSize='xl' fontWeight={500}>
-            {user?.userName}&rsquo;s notion
-          </Text>
+        {user && user.userName && !isLoading && (
+          <Profile userName={user.userName} />
         )}
 
         <NewpageButton />
-        <DocumentList documents={documents!} />
+        {documents?.length !== 0 && <DocumentList documents={documents!} />}
       </VStack>
     </Box>
   );
