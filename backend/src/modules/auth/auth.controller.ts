@@ -14,11 +14,18 @@ export class AuthController {
 
   @UseGuards(LocalAuthenticationGuard)
   @Post('login')
-  login(@Req() request: RequestWithUser) {
+  async login(@Req() request: RequestWithUser) {
     const { user } = request;
-    const token = this.authService.createToken({ userId: user.id });
-    user.password = undefined;
-    return { ...user, token };
+    const authenticatedUser = await this.authService.getAuthenticatedUser(
+      user.email,
+      user.password,
+    );
+
+    const token = this.authService.createToken({
+      userId: authenticatedUser.id,
+    });
+    authenticatedUser.password = undefined;
+    return { ...authenticatedUser, token };
   }
 
   @UseGuards(JwtAuthenticationGuard)

@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { UserService } from '../user/user.service';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,10 @@ export class AuthService {
   }
 
   //emailとpasswordから認証を行う
-  public async getAuthenticatedUser(email: string, plainTextPassword: string) {
+  public async getAuthenticatedUser(
+    email: string,
+    plainTextPassword: string,
+  ): Promise<User> {
     try {
       const user = await this.userService.getUserByEmail(email);
       const hashedProvidedPassword = await hash(plainTextPassword, 10);
