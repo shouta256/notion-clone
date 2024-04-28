@@ -1,9 +1,7 @@
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-
 import { useMutation, useQueryClient } from 'react-query';
 import { createDocument } from '@/app/api';
-
 import { Menu } from './menu';
 
 interface ItemProps {
@@ -44,7 +42,7 @@ export const Item: React.FC<ItemProps> = ({
       _hover={{ cursor: 'pointer', bg: 'gray.200' }}
     >
       <Flex justifyContent='space-between' alignItems='center' width='100%'>
-        <Flex alignItems='center'>
+        <Flex alignItems='center' flex='1' minWidth='0'>
           <Icon
             as={expanded ? ChevronDownIcon : ChevronRightIcon}
             onClick={(e) => {
@@ -52,12 +50,19 @@ export const Item: React.FC<ItemProps> = ({
               setExpanded(!expanded);
             }}
           />
-
-          <Text marginLeft='2' fontWeight='500'>
+          <Text
+            marginLeft='2'
+            fontWeight='500'
+            isTruncated
+            maxWidth='80%'
+            overflow='hidden'
+            whiteSpace='nowrap'
+            textOverflow='ellipsis'
+          >
             {title}
           </Text>
         </Flex>
-        <Flex justifyContent='flex-end'>
+        <Flex justifyContent='flex-end' flexShrink={0} marginRight={2}>
           <Menu documentId={documentId} />
           <AddIcon
             marginLeft='2'
