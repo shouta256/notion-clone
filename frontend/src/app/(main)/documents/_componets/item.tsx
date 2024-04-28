@@ -1,7 +1,6 @@
-import { Box, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useBoolean } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useMutation, useQueryClient } from 'react-query';
-import { createDocument } from '@/app/api';
+import { useState } from 'react';
 import { Menu } from './menu';
 
 interface ItemProps {
@@ -12,8 +11,6 @@ interface ItemProps {
   setExpanded: (expanded: boolean) => void;
 }
 
-//各ドキュメントのtitleを表示する
-//サイドバーで使用する
 export const Item: React.FC<ItemProps> = ({
   title,
   documentId,
@@ -21,17 +18,7 @@ export const Item: React.FC<ItemProps> = ({
   expanded,
   setExpanded,
 }) => {
-  const queryClient = useQueryClient();
-  const mutation = useMutation(() => createDocument('Untitle', documentId), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('documentList');
-    },
-  });
-
-  const handleAddIconClick = async () => {
-    await mutation.mutateAsync();
-    setExpanded(true);
-  };
+  const [isHovered, setIsHovered] = useBoolean(false);
 
   return (
     <Box
@@ -39,10 +26,12 @@ export const Item: React.FC<ItemProps> = ({
       width='100%'
       height='30px'
       onClick={onClick}
+      onMouseEnter={setIsHovered.on}
+      onMouseLeave={setIsHovered.off}
       _hover={{ cursor: 'pointer', bg: 'gray.200' }}
     >
       <Flex justifyContent='space-between' alignItems='center' width='100%'>
-        <Flex alignItems='center' flex='1' minWidth='0'>
+        <Flex alignItems='center' flex='1' width='80%'>
           <Icon
             as={expanded ? ChevronDownIcon : ChevronRightIcon}
             onClick={(e) => {
@@ -62,13 +51,12 @@ export const Item: React.FC<ItemProps> = ({
             {title}
           </Text>
         </Flex>
-        <Flex justifyContent='flex-end' flexShrink={0} marginRight={2}>
+        <Flex justifyContent='flex-end' display={isHovered ? 'flex' : 'none'}>
           <Menu documentId={documentId} />
           <AddIcon
             marginLeft='2'
             onClick={(e) => {
               e.stopPropagation();
-              handleAddIconClick();
             }}
           />
         </Flex>
