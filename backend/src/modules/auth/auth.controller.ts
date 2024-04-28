@@ -16,16 +16,12 @@ export class AuthController {
   @Post('login')
   async login(@Req() request: RequestWithUser) {
     const { user } = request;
-    const authenticatedUser = await this.authService.getAuthenticatedUser(
-      user.email,
-      user.password,
-    );
 
     const token = this.authService.createToken({
-      userId: authenticatedUser.id,
+      userId: user.id,
     });
-    authenticatedUser.password = undefined;
-    return { ...authenticatedUser, token };
+    const { password, ...userWithoutPassword } = user;
+    return { ...userWithoutPassword, token };
   }
 
   @UseGuards(JwtAuthenticationGuard)
