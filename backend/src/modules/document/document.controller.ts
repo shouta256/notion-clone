@@ -9,6 +9,7 @@ import {
   Patch,
   Delete,
   Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DocumentService } from './document.service';
 import { Document } from 'src/entities/document.entity';
@@ -38,14 +39,6 @@ export class DocumentController {
     const documentToUpdate = { ...document };
 
     return await this.documentService.updateDocument(documentToUpdate);
-  }
-
-  //ドキュメントIdからドキュメントを取得
-  @Get('/:documentId')
-  async getDocumentByDocumentId(
-    @Param('documentId') documentId: number,
-  ): Promise<Document> {
-    return this.documentService.getDocumentByDocumentId(documentId);
   }
 
   //userIdからドキュメントを階層構造で取得
@@ -100,5 +93,13 @@ export class DocumentController {
     await this.documentService.moveToRestoreRecursive(documentId);
 
     return await this.documentService.getDocumentsByUserId(userId);
+  }
+
+  //ドキュメントIdからドキュメントを取得
+  @Get(':documentId')
+  async getDocumentById(
+    @Param('documentId', ParseIntPipe) documentId: number,
+  ): Promise<Document> {
+    return this.documentService.getDocumentByDocumentId(documentId);
   }
 }

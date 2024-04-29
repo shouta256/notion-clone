@@ -157,11 +157,19 @@ export class DocumentService {
     }
   }
 
-  //アーカイブのドキュメントを取得
+  // アーカイブのドキュメントを取得
   async getArchive(userId: number): Promise<Document[]> {
-    return this.documentService.find({
-      where: { userId: userId, isArchive: true },
-    });
+    if (!userId) {
+      throw new Error('Invalid user ID.');
+    }
+    try {
+      return await this.documentService.find({
+        where: { userId: userId, isArchive: true },
+      });
+    } catch (error) {
+      console.error('Failed to fetch archived documents:', error);
+      throw error;
+    }
   }
 
   //アーカイブのドキュメントを削除
