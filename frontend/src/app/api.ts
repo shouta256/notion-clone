@@ -96,6 +96,18 @@ export const moveToArchive = async (
   return response.data;
 };
 
+export const getArchive = async (): Promise<DocumentType[]> => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axiosInstance.get(`document/archive`, config);
+
+  return response.data;
+};
+
 export const getDocumentById = async (
   documentId: number
 ): Promise<DocumentType> => {
