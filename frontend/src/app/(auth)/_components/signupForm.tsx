@@ -29,7 +29,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       setError('');
       await onSignup(userName, email, password);
     } catch (error) {
-      setError('ユーザー名またはパスワードが正しくありません。');
+      const message =
+        error.response?.data?.message || 'An unexpected error occurred';
+      setError(message);
     } finally {
       setLoading(false);
     }
