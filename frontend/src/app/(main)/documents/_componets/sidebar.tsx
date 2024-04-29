@@ -10,6 +10,7 @@ import { NestedDocuments } from '@/app/type';
 import { NewpageButton } from './newpageButton';
 import { DocumentList } from './documentList';
 import { Profile } from './profile';
+import TrashBox from './trashBox';
 
 //ユーザ名、ドキュメントの階層を表示するコンポーネント
 export const Sidebar = () => {
@@ -47,6 +48,8 @@ export const Sidebar = () => {
       position='fixed'
       top='0'
       left='0'
+      overflowY='auto'
+      maxHeight='100vh'
     >
       <VStack spacing='4' align='stretch'>
         {user && user.userName && !isLoading && (
@@ -55,6 +58,7 @@ export const Sidebar = () => {
 
         <NewpageButton />
         {documents?.length !== 0 && <DocumentList documents={documents!} />}
+        <TrashBox />
       </VStack>
     </Box>
   );
