@@ -1,151 +1,153 @@
-import axios from 'axios';
-import { DocumentType, NestedDocuments, UserData } from './type';
+import axios from "axios";
+import { DocumentType, NestedDocuments, UserData } from "./type";
 
-const axiosInstance = axios.create({ baseURL: 'http://localhost:8080' });
+const axiosInstance = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+});
 
 export const login = async (
-  email: string,
-  password: string
+	email: string,
+	password: string,
 ): Promise<UserData> => {
-  const inputData = { email: email, password: password };
-  const response = await axiosInstance.post('/auth/login', inputData);
-  return response.data;
+	const inputData = { email: email, password: password };
+	const response = await axiosInstance.post("/auth/login", inputData);
+	return response.data;
 };
 
 export const signUp = async (
-  userName: string,
-  email: string,
-  password: string
+	userName: string,
+	email: string,
+	password: string,
 ): Promise<UserData> => {
-  const inputData = { userName: userName, email: email, password: password };
-  const response = await axiosInstance.post('user', inputData);
-  const loginData = {
-    email: response.data.email,
-    password: response.data.password,
-  };
-  return login(loginData.email, loginData.password);
+	const inputData = { userName: userName, email: email, password: password };
+	const response = await axiosInstance.post("user", inputData);
+	const loginData = {
+		email: response.data.email,
+		password: response.data.password,
+	};
+	return login(loginData.email, loginData.password);
 };
 
 export const getUser = async (token: string): Promise<UserData> => {
-  const userIdResponse = await axiosInstance.get('auth/userId', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  const userId = userIdResponse.data;
+	const userIdResponse = await axiosInstance.get("auth/userId", {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const userId = userIdResponse.data;
 
-  const user = await axiosInstance.get(`user/${userId}`);
+	const user = await axiosInstance.get(`user/${userId}`);
 
-  return user.data;
+	return user.data;
 };
 
 export const createDocument = async (
-  title: string,
-  parentDocumentId?: number
+	title: string,
+	parentDocumentId?: number,
 ): Promise<DocumentType> => {
-  const token = localStorage.getItem('token');
-  const requestBody = { title: title, parentDocumentId: parentDocumentId };
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const document = await axiosInstance.post('document', requestBody, config);
+	const token = localStorage.getItem("token");
+	const requestBody = { title: title, parentDocumentId: parentDocumentId };
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const document = await axiosInstance.post("document", requestBody, config);
 
-  return document.data;
+	return document.data;
 };
 
 export const updateDocument = async (
-  documentId: number,
-  title?: string,
-  content?: JSON
+	documentId: number,
+	title?: string,
+	content?: JSON,
 ): Promise<DocumentType> => {
-  const requestBody = { id: documentId, title: title, content: content };
+	const requestBody = { id: documentId, title: title, content: content };
 
-  const response = await axiosInstance.patch(`document`, requestBody);
-  return response.data;
+	const response = await axiosInstance.patch(`document`, requestBody);
+	return response.data;
 };
 
 export const getDocuments = async (): Promise<NestedDocuments[]> => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+	const token = localStorage.getItem("token");
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
 
-  const documents = await axiosInstance.get('document', config);
+	const documents = await axiosInstance.get("document", config);
 
-  return documents.data;
+	return documents.data;
 };
 
 export const moveToArchive = async (
-  documentId: number
+	documentId: number,
 ): Promise<DocumentType> => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axiosInstance.put(
-    `document/archive/${documentId}`,
-    config
-  );
+	const token = localStorage.getItem("token");
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const response = await axiosInstance.put(
+		`document/archive/${documentId}`,
+		config,
+	);
 
-  return response.data;
+	return response.data;
 };
 
 export const getArchive = async (): Promise<DocumentType[]> => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axiosInstance.get(`document/archive`, config);
+	const token = localStorage.getItem("token");
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const response = await axiosInstance.get(`document/archive`, config);
 
-  return response.data;
+	return response.data;
 };
 
 export const deleteArchive = async (
-  documentId: number
+	documentId: number,
 ): Promise<DocumentType> => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axiosInstance.delete(
-    `document/archive/${documentId}`,
-    config
-  );
+	const token = localStorage.getItem("token");
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const response = await axiosInstance.delete(
+		`document/archive/${documentId}`,
+		config,
+	);
 
-  return response.data;
+	return response.data;
 };
 
 export const moveToRestore = async (
-  documentId: number
+	documentId: number,
 ): Promise<DocumentType> => {
-  const token = localStorage.getItem('token');
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axiosInstance.delete(
-    `document/restore/${documentId}`,
-    config
-  );
+	const token = localStorage.getItem("token");
+	const config = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
+	const response = await axiosInstance.delete(
+		`document/restore/${documentId}`,
+		config,
+	);
 
-  return response.data;
+	return response.data;
 };
 
 export const getDocumentById = async (
-  documentId: number
+	documentId: number,
 ): Promise<DocumentType> => {
-  const document = await axiosInstance.get(`document/${documentId}`);
+	const document = await axiosInstance.get(`document/${documentId}`);
 
-  return document.data;
+	return document.data;
 };
