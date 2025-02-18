@@ -2,7 +2,7 @@ import axios from "axios";
 import { DocumentType, NestedDocuments, UserData } from "./type";
 
 const axiosInstance = axios.create({
-	baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/`,
+	baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}api/`,
 });
 
 export const login = async (
