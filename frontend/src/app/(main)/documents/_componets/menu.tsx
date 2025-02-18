@@ -29,6 +29,7 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
   const mutation = useMutation(() => moveToArchive(documentId), {
     onSuccess: (document) => {
       queryClient.invalidateQueries('documentList');
+      queryClient.invalidateQueries('archive');
       if (document.parentDocumentId === -1) {
         router.push('/documents');
       } else {

@@ -2,6 +2,8 @@ import { Box, Flex, Icon, Text, useBoolean } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { Menu } from './menu';
+import { useMutation, useQueryClient } from 'react-query';
+import { createDocument } from '@/app/api';
 
 interface ItemProps {
   title: string;
@@ -19,7 +21,17 @@ export const Item: React.FC<ItemProps> = ({
   setExpanded,
 }) => {
   const [isHovered, setIsHovered] = useBoolean(false);
+  const queryClient = useQueryClient();
+  const mutation = useMutation(() => createDocument('Untitle', documentId), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('documentList');
+    },
+  });
 
+  const handleAddIconClick = async () => {
+    await mutation.mutateAsync();
+    setExpanded(true);
+  };
   return (
     <Box
       margin='1'
@@ -51,12 +63,17 @@ export const Item: React.FC<ItemProps> = ({
             {title}
           </Text>
         </Flex>
-        <Flex justifyContent='flex-end' display={isHovered ? 'flex' : 'none'}>
+        <Flex
+          marginRight={2}
+          justifyContent='flex-end'
+          display={isHovered ? 'flex' : 'none'}
+        >
           <Menu documentId={documentId} />
           <AddIcon
             marginLeft='2'
             onClick={(e) => {
               e.stopPropagation();
+              handleAddIconClick();
             }}
           />
         </Flex>

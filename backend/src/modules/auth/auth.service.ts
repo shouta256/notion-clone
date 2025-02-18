@@ -42,7 +42,7 @@ export class AuthService {
       return user;
     } catch (err) {
       console.log(err);
-      throw new BadRequestException('認証情報が正しくありません');
+      throw new BadRequestException('Authentication credentials are incorrect');
     }
   }
 

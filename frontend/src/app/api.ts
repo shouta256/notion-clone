@@ -125,6 +125,23 @@ export const deleteArchive = async (
   return response.data;
 };
 
+export const moveToRestore = async (
+  documentId: number
+): Promise<DocumentType> => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const response = await axiosInstance.delete(
+    `document/restore/${documentId}`,
+    config
+  );
+
+  return response.data;
+};
+
 export const getDocumentById = async (
   documentId: number
 ): Promise<DocumentType> => {

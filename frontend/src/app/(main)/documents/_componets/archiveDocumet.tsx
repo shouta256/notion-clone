@@ -33,33 +33,67 @@ export const ArchiveDocument = ({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const cancelRef = useRef(null);
 
-  const { mutate: deleteDoc } = useMutation(() => deleteArchive(document.id), {
-    onSuccess: () => {
-      queryClient.invalidateQueries('archive');
-      toast({
-        title: 'Document deleted.',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
-    },
-    onError: (error: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (error && typeof error === 'object' && 'message' in error) {
-        errorMessage = (error as { message: string }).message;
-      }
+  const { mutate: deleteDocument } = useMutation(
+    () => deleteArchive(document.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('archive');
+        toast({
+          title: 'Document deleted.',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      },
+      onError: (error: unknown) => {
+        let errorMessage = 'An unexpected error occurred';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (error && typeof error === 'object' && 'message' in error) {
+          errorMessage = (error as { message: string }).message;
+        }
 
-      toast({
-        title: 'Failed to delete document.',
-        description: errorMessage,
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-      });
-    },
-  });
+        toast({
+          title: 'Failed to delete document.',
+          description: errorMessage,
+          status: 'error',
+          duration: 2000,
+          isClosable: true,
+        });
+      },
+    }
+  );
+
+  const { mutate: restoreDocumemt } = useMutation(
+    () => restoreDocumemt(document.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('archive');
+        toast({
+          title: 'Document restored.',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      },
+      onError: (error: unknown) => {
+        let errorMessage = 'An unexpected error occurred';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (error && typeof error === 'object' && 'message' in error) {
+          errorMessage = (error as { message: string }).message;
+        }
+
+        toast({
+          title: 'Failed to delete document.',
+          description: errorMessage,
+          status: 'error',
+          duration: 2000,
+          isClosable: true,
+        });
+      },
+    }
+  );
 
   const handleOnClick = () => {
     router.push(`/documents/${document.id}`);
@@ -71,9 +105,13 @@ export const ArchiveDocument = ({
   };
 
   const handleDelete = () => {
-    deleteDoc();
+    deleteDocument();
     setIsConfirmOpen(false);
     setIsPopoverOpen(false);
+  };
+
+  const handleRestoreIconClick = () => {
+    restoreDocumemt();
   };
   const handleAlertDialogClose = () => {
     setIsConfirmOpen(false);
@@ -93,7 +131,7 @@ export const ArchiveDocument = ({
           </Text>
         </Flex>
         <Flex justifyContent='flex-end'>
-          <ChevronLeftIcon />
+          <ChevronLeftIcon onClick={handleRestoreIconClick} />
           <DeleteIcon marginLeft='2' onClick={handleDeleteIconClick} />
         </Flex>
       </Flex>

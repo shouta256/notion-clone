@@ -11,11 +11,10 @@ export default function MainLayout({
 }>) {
   return (
     <Flex>
-      <Sidebar />
-
       <Box ml='250px' p='4' flex='1'>
         {children}
       </Box>
+      <Sidebar />
     </Flex>
   );
 }
