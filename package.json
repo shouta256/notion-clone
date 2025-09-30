@@ -3,10 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "packageManager": "pnpm@9.0.0",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
+  "workspaces": ["backend", "frontend"],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4"
   },

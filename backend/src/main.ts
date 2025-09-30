@@ -1,6 +1,6 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,9 +15,9 @@ async function bootstrap() {
 
   // Centralized CORS configuration
   const allowedOrigins = [
-    'https://notion-clone-ten-delta.vercel.app',
-    'http://localhost:3000',
-    'https://localhost:3000',
+    "https://notion-clone-ten-delta.vercel.app",
+    "http://localhost:3000",
+    "https://localhost:3000",
     process.env.FRONTEND_ORIGIN, // optional env override
   ].filter(Boolean) as string[];
 
@@ -30,8 +30,8 @@ async function bootstrap() {
       }
       return callback(new Error(`Not allowed by CORS: ${origin}`), false);
     },
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
   });
 

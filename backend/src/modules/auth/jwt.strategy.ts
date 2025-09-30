@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserService } from '../user/user.service';
-import { User } from 'src/entities/user.entity';
-import { Request } from 'express';
+import { Injectable } from "@nestjs/common";
+import type { ConfigService } from "@nestjs/config";
+import { PassportStrategy } from "@nestjs/passport";
+import type { Request } from "express";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import type { User } from "src/entities/user.entity";
+import type { UserService } from "../user/user.service";
 
 interface JWTPayload {
-  userId: User['id'];
+  userId: User["id"];
 }
 
 @Injectable()
@@ -23,16 +23,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           const cookieHeader = req.headers?.cookie;
           if (!cookieHeader) return null;
           const cookies = Object.fromEntries(
-            cookieHeader.split(';').map((c) => {
-              const [k, ...v] = c.trim().split('=');
-              return [k, decodeURIComponent(v.join('='))];
+            cookieHeader.split(";").map((c) => {
+              const [k, ...v] = c.trim().split("=");
+              return [k, decodeURIComponent(v.join("="))];
             }),
           );
-          return (cookies as any)['Authentication'] || null;
+          return (cookies as any)["Authentication"] || null;
         },
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: configService.get("JWT_SECRET"),
     });
   }
 

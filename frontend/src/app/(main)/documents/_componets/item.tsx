@@ -1,9 +1,9 @@
-import { Box, Flex, Icon, Text, useBoolean } from '@chakra-ui/react';
-import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useState } from 'react';
-import { Menu } from './menu';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createDocument } from '@/app/api';
+import { createDocument } from "@/app/api";
+import { AddIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Flex, Icon, Text, useBoolean } from "@chakra-ui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { Menu } from "./menu";
 
 interface ItemProps {
   title: string;
@@ -23,9 +23,9 @@ export const Item: React.FC<ItemProps> = ({
   const [isHovered, setIsHovered] = useBoolean(false);
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: () => createDocument('Untitle', documentId),
+    mutationFn: () => createDocument("Untitle", documentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documentList'] });
+      queryClient.invalidateQueries({ queryKey: ["documentList"] });
     },
   });
 
@@ -35,16 +35,16 @@ export const Item: React.FC<ItemProps> = ({
   };
   return (
     <Box
-      margin='1'
-      width='100%'
-      height='30px'
+      margin="1"
+      width="100%"
+      height="30px"
       onClick={onClick}
       onMouseEnter={setIsHovered.on}
       onMouseLeave={setIsHovered.off}
-      _hover={{ cursor: 'pointer', bg: 'gray.200' }}
+      _hover={{ cursor: "pointer", bg: "gray.200" }}
     >
-      <Flex justifyContent='space-between' alignItems='center' width='100%'>
-        <Flex alignItems='center' flex='1' width='80%'>
+      <Flex justifyContent="space-between" alignItems="center" width="100%">
+        <Flex alignItems="center" flex="1" width="80%">
           <Icon
             as={expanded ? ChevronDownIcon : ChevronRightIcon}
             onClick={(e) => {
@@ -53,25 +53,21 @@ export const Item: React.FC<ItemProps> = ({
             }}
           />
           <Text
-            marginLeft='2'
-            fontWeight='500'
+            marginLeft="2"
+            fontWeight="500"
             isTruncated
-            maxWidth='80%'
-            overflow='hidden'
-            whiteSpace='nowrap'
-            textOverflow='ellipsis'
+            maxWidth="80%"
+            overflow="hidden"
+            whiteSpace="nowrap"
+            textOverflow="ellipsis"
           >
             {title}
           </Text>
         </Flex>
-        <Flex
-          marginRight={2}
-          justifyContent='flex-end'
-          display={isHovered ? 'flex' : 'none'}
-        >
+        <Flex marginRight={2} justifyContent="flex-end" display={isHovered ? "flex" : "none"}>
           <Menu documentId={documentId} />
           <AddIcon
-            marginLeft='2'
+            marginLeft="2"
             onClick={(e) => {
               e.stopPropagation();
               handleAddIconClick();

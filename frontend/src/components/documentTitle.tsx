@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { updateDocument } from '@/app/api';
-import { Box, Input } from '@chakra-ui/react';
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { updateDocument } from "@/app/api";
+import { Box, Input } from "@chakra-ui/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface DocumentTitleProps {
   documentId: number;
@@ -16,7 +16,7 @@ export const DocumentTitle = ({ documentId, title }: DocumentTitleProps) => {
   const mutation = useMutation({
     mutationFn: (newValue: string) => updateDocument(documentId, newValue),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['documentList'] });
+      queryClient.invalidateQueries({ queryKey: ["documentList"] });
     },
   });
 
@@ -27,13 +27,13 @@ export const DocumentTitle = ({ documentId, title }: DocumentTitleProps) => {
   };
 
   return (
-    <Box marginY='50px' marginLeft='50px'>
+    <Box marginY="50px" marginLeft="50px">
       <Input
         value={value}
-        placeholder='Untitle'
-        fontSize='50'
-        fontWeight='bold'
-        variant='unstyled'
+        placeholder="Untitle"
+        fontSize="50"
+        fontWeight="bold"
+        variant="unstyled"
         onChange={handleOnChange}
       />
     </Box>

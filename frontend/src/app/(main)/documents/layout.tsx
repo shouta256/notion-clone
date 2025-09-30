@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex } from "@chakra-ui/react";
 
-import { Sidebar } from './_componets/sidebar';
+import { Sidebar } from "./_componets/sidebar";
 
 export default function MainLayout({
   children,
@@ -11,7 +11,7 @@ export default function MainLayout({
 }>) {
   return (
     <Flex>
-      <Box ml='250px' p='4' flex='1'>
+      <Box ml="250px" p="4" flex="1">
         {children}
       </Box>
       <Sidebar />

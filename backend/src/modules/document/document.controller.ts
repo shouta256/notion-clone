@@ -1,26 +1,26 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
-  Post,
-  UseGuards,
-  Req,
-  Patch,
-  Delete,
-  Put,
   ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+  Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
-import { DocumentService } from './document.service';
-import { Document } from 'src/entities/document.entity';
+import type { Request } from 'express';
+import type { Document } from 'src/entities/document.entity';
 // import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from '../auth/auth.service';
-import { DocumentDataDTO } from './documentDto/documentData.dto';
+import type { AuthService } from '../auth/auth.service';
 import JwtAuthenticationGuard from '../auth/jwtAuthentication.guard';
-import { CreateDocumentDto } from './dto/create-document.dto';
-import { UpdateDocumentDto } from './dto/update-document.dto';
-import { Request } from 'express';
+import type { DocumentService } from './document.service';
+import type { DocumentDataDTO } from './documentDto/documentData.dto';
+import type { CreateDocumentDto } from './dto/create-document.dto';
+import type { UpdateDocumentDto } from './dto/update-document.dto';
 
 @Controller('document')
 export class DocumentController {

@@ -1,14 +1,14 @@
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
+  Button,
   FormControl,
   FormLabel,
   Input,
   InputGroup,
   InputRightElement,
-  Button,
-} from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+} from "@chakra-ui/react";
 
-import { ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState } from "react";
 
 interface InputFieldProps {
   label: string;
@@ -19,13 +19,7 @@ interface InputFieldProps {
 }
 
 //inputのデザインを共通化するためのコンポーネント
-export const InputField = ({
-  label,
-  type,
-  value,
-  onChange,
-  placeholder,
-}: InputFieldProps) => {
+export const InputField = ({ label, type, value, onChange, placeholder }: InputFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,17 +33,17 @@ export const InputField = ({
 
   return (
     <FormControl>
-      <FormLabel maxWidth='400px'>{label}</FormLabel>
-      <InputGroup maxWidth='400px'>
+      <FormLabel maxWidth="400px">{label}</FormLabel>
+      <InputGroup maxWidth="400px">
         <Input
-          type={showPassword ? 'text' : type}
+          type={showPassword ? "text" : type}
           value={value}
           onChange={handleChange}
           placeholder={placeholder}
         />
-        {type === 'password' && (
+        {type === "password" && (
           <InputRightElement>
-            <Button onClick={togglePasswordVisibility} h='1.75rem' size='sm'>
+            <Button onClick={togglePasswordVisibility} h="1.75rem" size="sm">
               {showPassword ? <ViewOffIcon /> : <ViewIcon />}
             </Button>
           </InputRightElement>

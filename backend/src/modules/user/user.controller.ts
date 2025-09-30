@@ -1,19 +1,19 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  Param,
   Patch,
   Post,
-  Param,
-  UseGuards,
   Req,
-  ForbiddenException,
+  UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import type { Request } from 'express';
 import JwtAuthenticationGuard from '../auth/jwtAuthentication.guard';
-import { Request } from 'express';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import type { CreateUserDto } from './dto/create-user.dto';
+import type { UpdateUserDto } from './dto/update-user.dto';
+import type { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {

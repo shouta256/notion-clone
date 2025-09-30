@@ -6,13 +6,14 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
 
-import { moveToArchive } from '@/app/api';
+import { moveToArchive } from "@/app/api";
 
 interface MenuProps {
   documentId: number;
@@ -29,10 +30,10 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
   const mutation = useMutation({
     mutationFn: () => moveToArchive(documentId),
     onSuccess: (document) => {
-      queryClient.invalidateQueries({ queryKey: ['documentList'] });
-      queryClient.invalidateQueries({ queryKey: ['archive'] });
+      queryClient.invalidateQueries({ queryKey: ["documentList"] });
+      queryClient.invalidateQueries({ queryKey: ["archive"] });
       if (document.parentDocumentId === -1) {
-        router.push('/documents');
+        router.push("/documents");
       } else {
         router.push(`/documents/${document.parentDocumentId}`);
       }
@@ -48,7 +49,7 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
     <Popover isOpen={isPopoverOpen} onClose={() => setIsPopoverOpen(false)}>
       <PopoverTrigger>
         <div
-          style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+          style={{ display: "flex", alignItems: "center", gap: "4px" }}
           onClick={(e) => {
             e.stopPropagation();
             setIsPopoverOpen(true);
@@ -59,7 +60,7 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
           <div style={dotStyle}></div>
         </div>
       </PopoverTrigger>
-      <PopoverContent width='200px'>
+      <PopoverContent width="200px">
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverBody>
@@ -71,8 +72,8 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
 };
 
 const dotStyle = {
-  width: '3px',
-  height: '3px',
-  borderRadius: '50%',
-  backgroundColor: 'black',
+  width: "3px",
+  height: "3px",
+  borderRadius: "50%",
+  backgroundColor: "black",
 };

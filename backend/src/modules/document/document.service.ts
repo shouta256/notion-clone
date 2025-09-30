@@ -1,14 +1,14 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
-import { Repository } from 'typeorm';
-import { DocumentDataDTO } from './documentDto/documentData.dto';
+import type { Repository } from 'typeorm';
+import type { DocumentDataDTO } from './documentDto/documentData.dto';
 
 @Injectable()
 export class DocumentService {

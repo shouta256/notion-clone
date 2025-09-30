@@ -1,14 +1,12 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { NestedDocuments } from '@/app/type';
+import type { NestedDocuments } from "@/app/type";
 
-import { Item } from './item';
+import { Item } from "./item";
 
 //ドキュメントの階層構造を再帰的に表示するコンポーネント
-export const DocumentList: React.FC<{ documents: NestedDocuments[] }> = ({
-  documents,
-}) => {
+export const DocumentList: React.FC<{ documents: NestedDocuments[] }> = ({ documents }) => {
   const router = useRouter();
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -42,7 +40,7 @@ export const DocumentList: React.FC<{ documents: NestedDocuments[] }> = ({
             />
 
             {expanded[document.id] && (
-              <div style={{ marginLeft: '15px' }}>
+              <div style={{ marginLeft: "15px" }}>
                 <DocumentList documents={document.children} />
               </div>
             )}
