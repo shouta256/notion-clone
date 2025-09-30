@@ -10,7 +10,7 @@ export class UpdateDocumentDto {
 
   @IsOptional()
   // content is JSON structure stored by the editor
-  content?: any;
+  content?: unknown;
 
   @IsInt()
   @IsOptional()

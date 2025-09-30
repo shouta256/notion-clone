@@ -21,14 +21,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         (req: Request) => {
           // Parse cookie header manually to avoid cookie-parser dependency
           const cookieHeader = req.headers?.cookie;
-          if (!cookieHeader) return null;
+          if (!cookieHeader) {
+            return null;
+          }
           const cookies = Object.fromEntries(
             cookieHeader.split(";").map((c) => {
               const [k, ...v] = c.trim().split("=");
               return [k, decodeURIComponent(v.join("="))];
             }),
           );
-          return (cookies as any)["Authentication"] || null;
+          return (cookies as Record<string, string>).Authentication || null;
         },
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),

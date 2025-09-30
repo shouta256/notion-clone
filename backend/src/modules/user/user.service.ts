@@ -3,11 +3,11 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { genSalt, hash } from 'bcrypt';
-import { User } from 'src/entities/user.entity';
-import type { Repository } from 'typeorm';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { genSalt, hash } from "bcrypt";
+import { User } from "src/entities/user.entity";
+import type { Repository } from "typeorm";
 
 @Injectable()
 export class UserService {
@@ -24,7 +24,7 @@ export class UserService {
   async createUser(user: User) {
     try {
       if (!user.password) {
-        throw new BadRequestException('Password is required');
+        throw new BadRequestException("Password is required");
       }
 
       // メールアドレスの存在をチェック
@@ -32,7 +32,7 @@ export class UserService {
         where: { email: user.email },
       });
       if (existingUser) {
-        throw new ConflictException('Email already registered');
+        throw new ConflictException("Email already registered");
       }
 
       const salt = await genSalt(12);
@@ -49,10 +49,8 @@ export class UserService {
         throw error;
       }
 
-      console.error('Error creating user:', error);
-      throw new BadRequestException(
-        'Unable to create user, please check the provided data',
-      );
+      console.error("Error creating user:", error);
+      throw new BadRequestException("Unable to create user, please check the provided data");
     }
   }
 
@@ -68,7 +66,7 @@ export class UserService {
   async getUserByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id', 'userName', 'email', 'password'],
+      select: ["id", "userName", "email", "password"],
     });
     return user;
   }
@@ -76,7 +74,7 @@ export class UserService {
   async getById(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-      throw new UnauthorizedException('ユーザーが存在しません');
+      throw new UnauthorizedException("ユーザーが存在しません");
     }
     return user;
   }

@@ -11,18 +11,18 @@ import {
   Req,
   UnauthorizedException,
   UseGuards,
-} from '@nestjs/common';
-import type { Request } from 'express';
-import type { Document } from 'src/entities/document.entity';
+} from "@nestjs/common";
+import type { Request } from "express";
+import type { Document } from "src/entities/document.entity";
 // import { AuthGuard } from '@nestjs/passport';
-import type { AuthService } from '../auth/auth.service';
-import JwtAuthenticationGuard from '../auth/jwtAuthentication.guard';
-import type { DocumentService } from './document.service';
-import type { DocumentDataDTO } from './documentDto/documentData.dto';
-import type { CreateDocumentDto } from './dto/create-document.dto';
-import type { UpdateDocumentDto } from './dto/update-document.dto';
+import type { AuthService } from "../auth/auth.service";
+import JwtAuthenticationGuard from "../auth/jwtAuthentication.guard";
+import type { DocumentService } from "./document.service";
+import type { DocumentDataDTO } from "./documentDto/documentData.dto";
+import type { CreateDocumentDto } from "./dto/create-document.dto";
+import type { UpdateDocumentDto } from "./dto/update-document.dto";
 
-@Controller('document')
+@Controller("document")
 export class DocumentController {
   constructor(
     private readonly documentService: DocumentService,
@@ -31,11 +31,8 @@ export class DocumentController {
 
   //新規ドキュメントを作成
   @UseGuards(JwtAuthenticationGuard)
-  @Post('/')
-  async createDocument(
-    @Body() document: CreateDocumentDto,
-    @Req() req: Request,
-  ) {
+  @Post("/")
+  async createDocument(@Body() document: CreateDocumentDto, @Req() req: Request) {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
     const documentToCreate = { ...document, userId: userId };
 
@@ -44,12 +41,9 @@ export class DocumentController {
 
   //ドキュメントを更新
   @UseGuards(JwtAuthenticationGuard)
-  @Patch('/')
-  async updateDocument(
-    @Body() document: UpdateDocumentDto,
-    @Req() req: Request,
-  ) {
-    if (!('id' in document)) {
+  @Patch("/")
+  async updateDocument(@Body() document: UpdateDocumentDto, @Req() req: Request) {
+    if (!("id" in document)) {
       throw new UnauthorizedException();
     }
     const userId = await this.authService.getUserIdFromAuthHeader(req);
@@ -61,7 +55,7 @@ export class DocumentController {
 
   //userIdからドキュメントを階層構造で取得
   @UseGuards(JwtAuthenticationGuard)
-  @Get('/')
+  @Get("/")
   async getDocumentsByUserId(@Req() req: Request): Promise<DocumentDataDTO[]> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
     if (!userId) {
@@ -72,21 +66,18 @@ export class DocumentController {
 
   //parentIdから子ドキュメントを取得
   @UseGuards(JwtAuthenticationGuard)
-  @Get('getChildren/:parentDocumentId?')
+  @Get("getChildren/:parentDocumentId?")
   async getChildByParentId(
-    @Param('parentDocumentId') parentDocumentId: number,
+    @Param("parentDocumentId") parentDocumentId: number,
     @Req() req: Request,
   ): Promise<Document[]> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
-    return this.documentService.getDocumentsByParentId(
-      parentDocumentId,
-      userId,
-    );
+    return this.documentService.getDocumentsByParentId(parentDocumentId, userId);
   }
 
   //アーカイブのドキュメントを取得
   @UseGuards(JwtAuthenticationGuard)
-  @Get('archive')
+  @Get("archive")
   async getArchive(@Req() req: Request): Promise<Document[]> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
     return this.documentService.getArchive(userId);
@@ -94,9 +85,9 @@ export class DocumentController {
 
   //ドキュメントとその子を全てアーカイブする
   @UseGuards(JwtAuthenticationGuard)
-  @Put('archive/:documentId')
+  @Put("archive/:documentId")
   async moveToArchive(
-    @Param('documentId') documentId: number,
+    @Param("documentId") documentId: number,
     @Req() req: Request,
   ): Promise<DocumentDataDTO> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
@@ -106,11 +97,8 @@ export class DocumentController {
   }
 
   @UseGuards(JwtAuthenticationGuard)
-  @Delete('archive/:documentId')
-  async deleteArchive(
-    @Param('documentId') documentId: number,
-    @Req() req: Request,
-  ) {
+  @Delete("archive/:documentId")
+  async deleteArchive(@Param("documentId") documentId: number, @Req() req: Request) {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
     await this.documentService.assertOwnership(documentId, userId);
     return await this.documentService.deleteArchive(documentId);
@@ -118,9 +106,9 @@ export class DocumentController {
 
   //ドキュメントとその子を全てリストアする
   @UseGuards(JwtAuthenticationGuard)
-  @Patch('restore/:documentId')
+  @Patch("restore/:documentId")
   async moveToRecover(
-    @Param('documentId') documentId: number,
+    @Param("documentId") documentId: number,
     @Req() req: Request,
   ): Promise<DocumentDataDTO[]> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);
@@ -131,9 +119,9 @@ export class DocumentController {
 
   //ドキュメントIdからドキュメントを取得
   @UseGuards(JwtAuthenticationGuard)
-  @Get(':documentId')
+  @Get(":documentId")
   async getDocumentById(
-    @Param('documentId', ParseIntPipe) documentId: number,
+    @Param("documentId", ParseIntPipe) documentId: number,
     @Req() req: Request,
   ): Promise<Document> {
     const userId = await this.authService.getUserIdFromAuthHeader(req);

@@ -4,11 +4,11 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Document } from 'src/entities/document.entity';
-import type { Repository } from 'typeorm';
-import type { DocumentDataDTO } from './documentDto/documentData.dto';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Document } from "src/entities/document.entity";
+import type { Repository } from "typeorm";
+import type { DocumentDataDTO } from "./documentDto/documentData.dto";
 
 @Injectable()
 export class DocumentService {
@@ -23,49 +23,45 @@ export class DocumentService {
       where: { id: documentId },
     });
     if (!document) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
     if (document.userId !== userId) {
-      throw new ForbiddenException('You do not have access to this document');
+      throw new ForbiddenException("You do not have access to this document");
     }
     return document;
   }
 
   //新規ドキュメントを作成する
   async createDocument(document: Partial<Document>) {
-    const createdDocument = await this.documentService.save(document as any);
+    const createdDocument = await this.documentService.save(document as Document);
     return createdDocument;
   }
 
   // ドキュメントを更新する
-  async updateDocument(
-    updatedDocumentData: Partial<Document>,
-  ): Promise<Document> {
-    if ('id' in updatedDocumentData) {
+  async updateDocument(updatedDocumentData: Partial<Document>): Promise<Document> {
+    if ("id" in updatedDocumentData) {
       const documentToUpdate = await this.documentService.findOne({
         where: { id: updatedDocumentData.id },
       });
       if (!documentToUpdate) {
-        throw new NotFoundException('Document not found');
+        throw new NotFoundException("Document not found");
       }
 
       // 更新可能なフィールドのみを反映（userId / isArchive はここでは変更不可）
-      if (typeof updatedDocumentData.title !== 'undefined') {
+      if (typeof updatedDocumentData.title !== "undefined") {
         documentToUpdate.title = updatedDocumentData.title;
       }
-      if (typeof updatedDocumentData.content !== 'undefined') {
-        documentToUpdate.content = updatedDocumentData.content as any;
+      if (typeof updatedDocumentData.content !== "undefined") {
+        documentToUpdate.content = updatedDocumentData.content as unknown;
       }
-      if (typeof updatedDocumentData.parentDocumentId !== 'undefined') {
-        documentToUpdate.parentDocumentId =
-          updatedDocumentData.parentDocumentId as number;
+      if (typeof updatedDocumentData.parentDocumentId !== "undefined") {
+        documentToUpdate.parentDocumentId = updatedDocumentData.parentDocumentId as number;
       }
 
       const updatedDocument = await this.documentService.save(documentToUpdate);
       return updatedDocument;
-    } else {
-      throw new Error('id must be provided');
     }
+    throw new Error("id must be provided");
   }
 
   //ドキュメントIdからドキュメントを取得する
@@ -75,7 +71,7 @@ export class DocumentService {
     });
 
     if (!document) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
 
     return document;
@@ -88,7 +84,7 @@ export class DocumentService {
     });
 
     if (!documents) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
 
     // ドキュメントをツリー形式に変換するための再帰的な関数
@@ -96,18 +92,18 @@ export class DocumentService {
       const tree: DocumentDataDTO[] = [];
       const map: Record<number, DocumentDataDTO> = {};
 
-      documents.forEach((doc) => {
+      for (const doc of documents) {
         map[doc.id] = { id: doc.id, title: doc.title, children: [] };
-      });
+      }
 
-      documents.forEach((doc) => {
+      for (const doc of documents) {
         const parent = map[doc.parentDocumentId];
         if (parent) {
           parent.children.push(map[doc.id]);
         } else {
           tree.push(map[doc.id]);
         }
-      });
+      }
 
       return tree;
     };
@@ -116,16 +112,13 @@ export class DocumentService {
   }
 
   //parentIdに一致する子のドキュメントを探す（ユーザー制限付き）
-  async getDocumentsByParentId(
-    parentDocumentId: number,
-    userId: number,
-  ): Promise<Document[]> {
+  async getDocumentsByParentId(parentDocumentId: number, userId: number): Promise<Document[]> {
     const documents = await this.documentService.find({
       where: { parentDocumentId: parentDocumentId, userId },
     });
 
     if (!documents) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
 
     return documents;
@@ -138,7 +131,7 @@ export class DocumentService {
     });
 
     if (!document) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
 
     document.isArchive = true; // ドキュメントをアーカイブする
@@ -148,17 +141,11 @@ export class DocumentService {
   }
 
   //ドキュメントとその子を全てアーカイブする
-  async moveToArchiveRecursive(
-    documentId: number,
-    userId: number,
-  ): Promise<void> {
+  async moveToArchiveRecursive(documentId: number, userId: number): Promise<void> {
     await this.moveToArchive(documentId); // ドキュメントをアーカイブする
 
     // 子ドキュメントを取得して再帰的にアーカイブする
-    const childDocuments = await this.getDocumentsByParentId(
-      documentId,
-      userId,
-    );
+    const childDocuments = await this.getDocumentsByParentId(documentId, userId);
     for (const childDocument of childDocuments) {
       await this.moveToArchiveRecursive(childDocument.id, userId);
     }
@@ -171,7 +158,7 @@ export class DocumentService {
     });
 
     if (!document) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
 
     document.isArchive = false;
@@ -181,17 +168,11 @@ export class DocumentService {
   }
 
   //ドキュメントとその子を全てリストアする
-  async moveToRestoreRecursive(
-    documentId: number,
-    userId: number,
-  ): Promise<void> {
+  async moveToRestoreRecursive(documentId: number, userId: number): Promise<void> {
     await this.moveToRestore(documentId); // ドキュメントをリストアする
 
     // 子ドキュメントを取得して再帰的にリストアする
-    const childDocuments = await this.getDocumentsByParentId(
-      documentId,
-      userId,
-    );
+    const childDocuments = await this.getDocumentsByParentId(documentId, userId);
     for (const childDocument of childDocuments) {
       await this.moveToRestoreRecursive(childDocument.id, userId);
     }
@@ -200,14 +181,14 @@ export class DocumentService {
   // アーカイブのドキュメントを取得
   async getArchive(userId: number): Promise<Document[]> {
     if (!userId) {
-      throw new Error('Invalid user ID.');
+      throw new Error("Invalid user ID.");
     }
     try {
       return await this.documentService.find({
         where: { userId: userId, isArchive: true },
       });
     } catch (error) {
-      console.error('Failed to fetch archived documents:', error);
+      console.error("Failed to fetch archived documents:", error);
       throw error;
     }
   }
@@ -221,11 +202,11 @@ export class DocumentService {
       });
 
       if (!documentToDelete) {
-        throw new NotFoundException('Document not found');
+        throw new NotFoundException("Document not found");
       }
 
       if (!documentToDelete.isArchive) {
-        throw new BadRequestException('This document is not archived');
+        throw new BadRequestException("This document is not archived");
       }
 
       // transactional recursive delete
@@ -244,11 +225,12 @@ export class DocumentService {
       });
 
       return documentToDelete;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to delete document',
-        (error as any).message,
-      );
+    } catch (error: unknown) {
+      const message =
+        typeof error === "object" && error && "message" in error
+          ? String((error as { message?: unknown }).message)
+          : undefined;
+      throw new InternalServerErrorException("Failed to delete document", message);
     }
   }
 }

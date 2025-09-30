@@ -41,11 +41,11 @@ export const createDocument = async (
 export const updateDocument = async (
   documentId: number,
   title?: string,
-  content?: JSON,
+  content?: unknown,
 ): Promise<DocumentType> => {
   const requestBody = { id: documentId, title: title, content: content };
 
-  const response = await axiosInstance.patch(`document`, requestBody);
+  const response = await axiosInstance.patch("document", requestBody);
   return response.data;
 };
 
@@ -62,7 +62,7 @@ export const moveToArchive = async (documentId: number): Promise<DocumentType> =
 };
 
 export const getArchive = async (): Promise<DocumentType[]> => {
-  const response = await axiosInstance.get(`document/archive`);
+  const response = await axiosInstance.get("document/archive");
 
   return response.data;
 };

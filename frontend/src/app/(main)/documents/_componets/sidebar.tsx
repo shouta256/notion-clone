@@ -46,7 +46,7 @@ export const Sidebar = () => {
       maxHeight="100vh"
     >
       <VStack spacing="4" align="stretch">
-        {user && user.userName && !isLoading && <Profile userName={user.userName} />}
+        {user?.userName && !isLoading && <Profile userName={user.userName} />}
 
         <NewpageButton />
         {Array.isArray(documents) && documents.length !== 0 && (

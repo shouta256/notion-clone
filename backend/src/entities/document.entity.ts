@@ -43,7 +43,7 @@ export class Document {
   isArchive: boolean;
 
   @Column({ type: "json", nullable: true })
-  content: any | null;
+  content: unknown | null;
 
   @ManyToOne(
     () => User,

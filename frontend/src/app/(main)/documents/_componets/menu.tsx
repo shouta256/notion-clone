@@ -48,17 +48,18 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
   return (
     <Popover isOpen={isPopoverOpen} onClose={() => setIsPopoverOpen(false)}>
       <PopoverTrigger>
-        <div
+        <button
+          type="button"
           style={{ display: "flex", alignItems: "center", gap: "4px" }}
           onClick={(e) => {
             e.stopPropagation();
             setIsPopoverOpen(true);
           }}
         >
-          <div style={dotStyle}></div>
-          <div style={dotStyle}></div>
-          <div style={dotStyle}></div>
-        </div>
+          <div style={dotStyle} />
+          <div style={dotStyle} />
+          <div style={dotStyle} />
+        </button>
       </PopoverTrigger>
       <PopoverContent width="200px">
         <PopoverArrow />

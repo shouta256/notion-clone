@@ -26,7 +26,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
       setError("");
       await onSignup(userName, email, password);
     } catch (error: unknown) {
-      const message = (error as any).response?.data?.message || "An unexpected error occurred";
+      const axiosLike = error as { response?: { data?: { message?: string } } } | undefined;
+      const message = axiosLike?.response?.data?.message ?? "An unexpected error occurred";
       setError(message);
     } finally {
       setLoading(false);
@@ -64,9 +65,24 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
         </Button>
         <Text>
           アカウントをお持ちの場合は、
-          <span style={{ color: "blue", cursor: "pointer" }} onClick={onSwitchToLogin}>
+          <button
+            type="button"
+            style={{
+              color: "blue",
+              cursor: "pointer",
+              background: "none",
+              border: "none",
+              padding: 0,
+            }}
+            onClick={onSwitchToLogin}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onSwitchToLogin();
+              }
+            }}
+          >
             こちら
-          </span>
+          </button>
           から新規登録してください。
         </Text>
       </Stack>

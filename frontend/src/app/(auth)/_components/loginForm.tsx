@@ -55,9 +55,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onSwitchToSignup 
         </Button>
         <Text>
           アカウントをお持ちでない場合は、
-          <span style={{ color: "blue", cursor: "pointer" }} onClick={onSwitchToSignup}>
+          <button
+            type="button"
+            style={{
+              color: "blue",
+              cursor: "pointer",
+              background: "none",
+              border: "none",
+              padding: 0,
+            }}
+            onClick={onSwitchToSignup}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onSwitchToSignup();
+              }
+            }}
+          >
             こちら
-          </span>
+          </button>
           から新規登録してください。
         </Text>
       </Stack>

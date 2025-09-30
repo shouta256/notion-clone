@@ -2,10 +2,8 @@ export interface UserData {
   id: number;
   userName: string;
   email: string;
-  password: string;
   createdAt: Date;
   updatedAt: Date;
-  token: string;
 }
 
 export interface DocumentType {
@@ -14,7 +12,7 @@ export interface DocumentType {
   parentDocumentId: number;
   idArchive: boolean;
   userId: number;
-  content: JSON;
+  content: unknown;
 }
 
 export interface NestedDocuments {

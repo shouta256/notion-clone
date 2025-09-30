@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import type { JwtService } from "@nestjs/jwt";
-import { compare, hash } from "bcrypt";
+import { compare } from "bcrypt";
 import type { Request } from "express";
 import type { User } from "src/entities/user.entity";
 import type { UserService } from "../user/user.service";
@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   //トークンを作成
-  public createToken(payload: any) {
+  public createToken(payload: { userId: number }) {
     const token = this.jwtService.sign(payload);
     return token;
   }
@@ -56,7 +56,7 @@ export class AuthService {
   //リクエストからトークンを取得してuserIdを返す（Cookie優先、なければAuthヘッダ）
   async getUserIdFromAuthHeader(req: Request): Promise<number> {
     // Cookie: Authentication
-    const cookieHeader = req.headers["cookie"];
+    const cookieHeader = req.headers.cookie;
     if (cookieHeader) {
       const cookies = Object.fromEntries(
         cookieHeader.split(";").map((c) => {
@@ -64,14 +64,14 @@ export class AuthService {
           return [k, decodeURIComponent(v.join("="))];
         }),
       );
-      const cookieToken = (cookies as any)["Authentication"];
+      const cookieToken = (cookies as Record<string, string>).Authentication;
       if (cookieToken) {
         return this.getUserIdFromToken(cookieToken);
       }
     }
 
     // Authorization: Bearer <token>
-    const authHeader = req.headers["authorization"];
+    const authHeader = req.headers.authorization;
     if (!authHeader) {
       throw new NotFoundException("Authorization header is missing");
     }

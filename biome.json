@@ -5,6 +5,11 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
   "files": {
     "ignore": ["**/node_modules", "**/dist", "**/.next", "**/coverage", "**/.turbo", "**/build"]
   },
