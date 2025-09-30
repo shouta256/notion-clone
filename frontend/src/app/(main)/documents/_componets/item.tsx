@@ -2,7 +2,7 @@ import { Box, Flex, Icon, Text, useBoolean } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { Menu } from './menu';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createDocument } from '@/app/api';
 
 interface ItemProps {
@@ -22,9 +22,10 @@ export const Item: React.FC<ItemProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useBoolean(false);
   const queryClient = useQueryClient();
-  const mutation = useMutation(() => createDocument('Untitle', documentId), {
+  const mutation = useMutation({
+    mutationFn: () => createDocument('Untitle', documentId),
     onSuccess: () => {
-      queryClient.invalidateQueries('documentList');
+      queryClient.invalidateQueries({ queryKey: ['documentList'] });
     },
   });
 

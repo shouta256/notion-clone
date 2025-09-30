@@ -3,11 +3,11 @@ import config from '../config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DocumentModule } from './modules/document/document.module';
-import { CorsMiddleware } from 'cors.middleware';
+// Removed custom CorsMiddleware; using app.enableCors in main.ts
 
 @Module({
   imports: [
@@ -36,8 +36,4 @@ import { CorsMiddleware } from 'cors.middleware';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CorsMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

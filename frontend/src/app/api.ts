@@ -3,6 +3,7 @@ import { DocumentType, NestedDocuments, UserData } from "./type";
 
 const axiosInstance = axios.create({
 	baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}api/`,
+	withCredentials: true,
 });
 
 export const login = async (
@@ -20,24 +21,13 @@ export const signUp = async (
 	password: string,
 ): Promise<UserData> => {
 	const inputData = { userName: userName, email: email, password: password };
-	const response = await axiosInstance.post("user", inputData);
-	const loginData = {
-		email: response.data.email,
-		password: response.data.password,
-	};
-	return login(loginData.email, loginData.password);
+	await axiosInstance.post("user", inputData);
+	// Use original credentials to login; backend never returns plaintext password
+	return login(email, password);
 };
 
-export const getUser = async (token: string): Promise<UserData> => {
-	const userIdResponse = await axiosInstance.get("auth/userId", {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const userId = userIdResponse.data;
-
-	const user = await axiosInstance.get(`user/${userId}`);
-
+export const getUser = async (_token?: string): Promise<UserData> => {
+	const user = await axiosInstance.get("auth/authenticate");
 	return user.data;
 };
 
@@ -45,14 +35,8 @@ export const createDocument = async (
 	title: string,
 	parentDocumentId?: number,
 ): Promise<DocumentType> => {
-	const token = localStorage.getItem("token");
 	const requestBody = { title: title, parentDocumentId: parentDocumentId };
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
-	const document = await axiosInstance.post("document", requestBody, config);
+	const document = await axiosInstance.post("document", requestBody);
 
 	return document.data;
 };
@@ -69,14 +53,7 @@ export const updateDocument = async (
 };
 
 export const getDocuments = async (): Promise<NestedDocuments[]> => {
-	const token = localStorage.getItem("token");
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
-
-	const documents = await axiosInstance.get("document", config);
+	const documents = await axiosInstance.get("document");
 
 	return documents.data;
 };
@@ -84,28 +61,13 @@ export const getDocuments = async (): Promise<NestedDocuments[]> => {
 export const moveToArchive = async (
 	documentId: number,
 ): Promise<DocumentType> => {
-	const token = localStorage.getItem("token");
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
-	const response = await axiosInstance.put(
-		`document/archive/${documentId}`,
-		config,
-	);
+	const response = await axiosInstance.put(`document/archive/${documentId}`);
 
 	return response.data;
 };
 
 export const getArchive = async (): Promise<DocumentType[]> => {
-	const token = localStorage.getItem("token");
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
-	const response = await axiosInstance.get(`document/archive`, config);
+	const response = await axiosInstance.get(`document/archive`);
 
 	return response.data;
 };
@@ -113,15 +75,8 @@ export const getArchive = async (): Promise<DocumentType[]> => {
 export const deleteArchive = async (
 	documentId: number,
 ): Promise<DocumentType> => {
-	const token = localStorage.getItem("token");
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
 	const response = await axiosInstance.delete(
 		`document/archive/${documentId}`,
-		config,
 	);
 
 	return response.data;
@@ -130,15 +85,9 @@ export const deleteArchive = async (
 export const moveToRestore = async (
 	documentId: number,
 ): Promise<DocumentType> => {
-	const token = localStorage.getItem("token");
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
-	const response = await axiosInstance.delete(
+	const response = await axiosInstance.patch(
 		`document/restore/${documentId}`,
-		config,
+		{},
 	);
 
 	return response.data;

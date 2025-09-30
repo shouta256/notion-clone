@@ -10,7 +10,7 @@ import {
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { moveToArchive } from '@/app/api';
 
@@ -26,10 +26,11 @@ export const Menu: React.FC<MenuProps> = ({ documentId }) => {
   const router = useRouter();
 
   const queryClient = useQueryClient();
-  const mutation = useMutation(() => moveToArchive(documentId), {
+  const mutation = useMutation({
+    mutationFn: () => moveToArchive(documentId),
     onSuccess: (document) => {
-      queryClient.invalidateQueries('documentList');
-      queryClient.invalidateQueries('archive');
+      queryClient.invalidateQueries({ queryKey: ['documentList'] });
+      queryClient.invalidateQueries({ queryKey: ['archive'] });
       if (document.parentDocumentId === -1) {
         router.push('/documents');
       } else {

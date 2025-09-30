@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { User } from 'src/entities/user.entity';
-import { use } from 'passport';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -63,8 +63,24 @@ export class AuthService {
     }
   }
 
-  //リクエストヘッダーからトークンを取得してuserIdを返す
+  //リクエストからトークンを取得してuserIdを返す（Cookie優先、なければAuthヘッダ）
   async getUserIdFromAuthHeader(req: Request): Promise<number> {
+    // Cookie: Authentication
+    const cookieHeader = req.headers['cookie'];
+    if (cookieHeader) {
+      const cookies = Object.fromEntries(
+        cookieHeader.split(';').map((c) => {
+          const [k, ...v] = c.trim().split('=');
+          return [k, decodeURIComponent(v.join('='))];
+        }),
+      );
+      const cookieToken = (cookies as any)['Authentication'];
+      if (cookieToken) {
+        return this.getUserIdFromToken(cookieToken);
+      }
+    }
+
+    // Authorization: Bearer <token>
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
       throw new NotFoundException('Authorization header is missing');

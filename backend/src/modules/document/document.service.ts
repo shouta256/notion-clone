@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Document } from 'src/entities/document.entity';
@@ -16,9 +17,23 @@ export class DocumentService {
     private readonly documentService: Repository<Document>,
   ) {}
 
+  // 所有者チェック（IDOR対策）
+  async assertOwnership(documentId: number, userId: number): Promise<Document> {
+    const document = await this.documentService.findOne({
+      where: { id: documentId },
+    });
+    if (!document) {
+      throw new NotFoundException('Document not found');
+    }
+    if (document.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this document');
+    }
+    return document;
+  }
+
   //新規ドキュメントを作成する
-  async createDocument(document: Document) {
-    const createdDocument = await this.documentService.save(document);
+  async createDocument(document: Partial<Document>) {
+    const createdDocument = await this.documentService.save(document as any);
     return createdDocument;
   }
 
@@ -34,7 +49,17 @@ export class DocumentService {
         throw new NotFoundException('Document not found');
       }
 
-      Object.assign(documentToUpdate, updatedDocumentData);
+      // 更新可能なフィールドのみを反映（userId / isArchive はここでは変更不可）
+      if (typeof updatedDocumentData.title !== 'undefined') {
+        documentToUpdate.title = updatedDocumentData.title;
+      }
+      if (typeof updatedDocumentData.content !== 'undefined') {
+        documentToUpdate.content = updatedDocumentData.content as any;
+      }
+      if (typeof updatedDocumentData.parentDocumentId !== 'undefined') {
+        documentToUpdate.parentDocumentId =
+          updatedDocumentData.parentDocumentId as number;
+      }
 
       const updatedDocument = await this.documentService.save(documentToUpdate);
       return updatedDocument;
@@ -90,10 +115,13 @@ export class DocumentService {
     return buildTree(documents);
   }
 
-  //parentIdに一致する子のドキュメントを探す
-  async getDocumentsByParentId(parentDocumentId: number): Promise<Document[]> {
+  //parentIdに一致する子のドキュメントを探す（ユーザー制限付き）
+  async getDocumentsByParentId(
+    parentDocumentId: number,
+    userId: number,
+  ): Promise<Document[]> {
     const documents = await this.documentService.find({
-      where: { parentDocumentId: parentDocumentId },
+      where: { parentDocumentId: parentDocumentId, userId },
     });
 
     if (!documents) {
@@ -120,13 +148,19 @@ export class DocumentService {
   }
 
   //ドキュメントとその子を全てアーカイブする
-  async moveToArchiveRecursive(documentId: number): Promise<void> {
+  async moveToArchiveRecursive(
+    documentId: number,
+    userId: number,
+  ): Promise<void> {
     await this.moveToArchive(documentId); // ドキュメントをアーカイブする
 
     // 子ドキュメントを取得して再帰的にアーカイブする
-    const childDocuments = await this.getDocumentsByParentId(documentId);
+    const childDocuments = await this.getDocumentsByParentId(
+      documentId,
+      userId,
+    );
     for (const childDocument of childDocuments) {
-      await this.moveToArchiveRecursive(childDocument.id);
+      await this.moveToArchiveRecursive(childDocument.id, userId);
     }
   }
 
@@ -147,13 +181,19 @@ export class DocumentService {
   }
 
   //ドキュメントとその子を全てリストアする
-  async moveToRestoreRecursive(documentId: number): Promise<void> {
+  async moveToRestoreRecursive(
+    documentId: number,
+    userId: number,
+  ): Promise<void> {
     await this.moveToRestore(documentId); // ドキュメントをリストアする
 
     // 子ドキュメントを取得して再帰的にリストアする
-    const childDocuments = await this.getDocumentsByParentId(documentId);
+    const childDocuments = await this.getDocumentsByParentId(
+      documentId,
+      userId,
+    );
     for (const childDocument of childDocuments) {
-      await this.moveToRestoreRecursive(childDocument.id);
+      await this.moveToRestoreRecursive(childDocument.id, userId);
     }
   }
 
@@ -175,7 +215,8 @@ export class DocumentService {
   //アーカイブのドキュメントを削除
   async deleteArchive(documentId: number): Promise<Document> {
     try {
-      const documentToDelete = await this.documentService.findOne({
+      const docRepo = this.documentService;
+      const documentToDelete = await docRepo.findOne({
         where: { id: documentId },
       });
 
@@ -187,13 +228,26 @@ export class DocumentService {
         throw new BadRequestException('This document is not archived');
       }
 
-      await this.documentService.delete(documentId);
+      // transactional recursive delete
+      await docRepo.manager.transaction(async (manager) => {
+        const deleteSubtree = async (id: number) => {
+          const children = await manager.find(Document, {
+            where: { parentDocumentId: id },
+          });
+          for (const child of children) {
+            await deleteSubtree(child.id);
+          }
+          await manager.delete(Document, { id });
+        };
+
+        await deleteSubtree(documentId);
+      });
 
       return documentToDelete;
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to delete document',
-        error.message,
+        (error as any).message,
       );
     }
   }

@@ -3,7 +3,7 @@
 import { Box } from '@chakra-ui/react';
 
 import { useParams } from 'next/navigation';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getDocumentById } from '@/app/api';
 import { DocumentType } from '@/app/type';
@@ -19,13 +19,11 @@ export default function DocumentPage() {
     10
   );
 
-  const documentQueryResult = useQuery<DocumentType | undefined>(
-    'document',
-    () => getDocumentById(documentId),
-    {
-      cacheTime: 0,
-    }
-  );
+  const documentQueryResult = useQuery<DocumentType | undefined>({
+    queryKey: ['document', documentId],
+    queryFn: () => getDocumentById(documentId),
+    gcTime: 0,
+  });
   const { data: document, isLoading } = documentQueryResult;
 
   if (isLoading) {

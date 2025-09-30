@@ -1,8 +1,8 @@
 import { Box, VStack } from "@chakra-ui/react";
 
 import { redirect } from "next/navigation";
-import { useQuery } from "react-query";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 import { getDocuments, getUser } from "@/app/api";
 import { NestedDocuments } from "@/app/type";
@@ -13,28 +13,23 @@ import { Profile } from "./profile";
 
 //ユーザ名、ドキュメントの階層を表示するコンポーネント
 export const Sidebar = () => {
-	const [token, setToken] = useState("");
-
-	//トークンからユーザを取得
-	const userQueryResult = useQuery("user", () => getUser(token), {
-		enabled: !!token,
-	});
+	// Cookieベースの認証に移行済みのため token は不要
+	const userQueryResult = useQuery({ queryKey: ["user"], queryFn: () => getUser() });
 	const { data: user, isLoading } = userQueryResult;
 
 	//ドキュメントを取得
-	const documentsQueryResult = useQuery<NestedDocuments[] | undefined>(
-		"documentList",
-		() => getDocuments(),
-	);
+	const documentsQueryResult = useQuery<NestedDocuments[] | undefined>({
+		queryKey: ["documentList"],
+		queryFn: () => getDocuments(),
+	});
 	const { data: documents } = documentsQueryResult;
 
 	useEffect(() => {
-		const storedToken = localStorage.getItem("token");
-		if (!storedToken) {
+		// 認証されていなければサーバが 401 を返す前提で、ここでは単純にトップへ誘導したい場合だけ処理
+		if (!user && !isLoading) {
 			redirect("/");
 		}
-		setToken(storedToken);
-	}, []);
+	}, [user, isLoading]);
 
 	return (
 		<Box
@@ -56,7 +51,10 @@ export const Sidebar = () => {
 				)}
 
 				<NewpageButton />
-				{documents?.length !== 0 && <DocumentList documents={documents!} />}
+				{Array.isArray(documents) && documents.length !== 0 && (
+					<DocumentList documents={documents}
+					/>
+				)}
 				{/* <TrashBox /> */}
 			</VStack>
 		</Box>

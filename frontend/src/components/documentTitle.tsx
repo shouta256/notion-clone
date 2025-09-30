@@ -3,7 +3,7 @@
 import { updateDocument } from '@/app/api';
 import { Box, Input } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface DocumentTitleProps {
   documentId: number;
@@ -13,14 +13,12 @@ interface DocumentTitleProps {
 export const DocumentTitle = ({ documentId, title }: DocumentTitleProps) => {
   const [value, setValue] = useState(title);
   const queryClient = useQueryClient();
-  const mutation = useMutation(
-    (newValue: string) => updateDocument(documentId, newValue),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('documentList');
-      },
-    }
-  );
+  const mutation = useMutation({
+    mutationFn: (newValue: string) => updateDocument(documentId, newValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documentList'] });
+    },
+  });
 
   const handleOnChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;

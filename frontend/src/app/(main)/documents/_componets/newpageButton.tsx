@@ -1,16 +1,17 @@
 import { Button, Icon } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createDocument } from '@/app/api';
 
 //サイドバーに表示する新規ページのボタンコンポーネント
 export const NewpageButton = () => {
   const queryClient = useQueryClient();
-  const mutation = useMutation(() => createDocument('Untitle'), {
+  const mutation = useMutation({
+    mutationFn: () => createDocument('Untitle'),
     onSuccess: () => {
-      queryClient.invalidateQueries('documentList');
+      queryClient.invalidateQueries({ queryKey: ['documentList'] });
     },
   });
 

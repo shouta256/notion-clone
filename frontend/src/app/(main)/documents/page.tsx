@@ -4,7 +4,7 @@ import { Box, Button, Center, Heading, Icon } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
 import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createDocument } from '@/app/api';
 
@@ -14,9 +14,10 @@ export default function DocumentsPage() {
   const router = useRouter();
 
   const queryClient = useQueryClient();
-  const mutation = useMutation(() => createDocument('Untitle'), {
+  const mutation = useMutation({
+    mutationFn: () => createDocument('Untitle'),
     onSuccess: (data) => {
-      queryClient.invalidateQueries('documentList');
+      queryClient.invalidateQueries({ queryKey: ['documentList'] });
       router.push(`/documents/${data.id}`);
     },
   });

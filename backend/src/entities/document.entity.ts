@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -13,9 +20,21 @@ export class Document {
     type: 'int',
     name: 'parent_document_id',
     nullable: true,
-    default: -1,
+    default: null,
   })
-  parentDocumentId: number;
+  parentDocumentId: number | null;
+
+  // Self reference: parent
+  @ManyToOne(() => Document, (document) => document.children, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'parent_document_id' })
+  parent?: Document | null;
+
+  // Self reference: children
+  @OneToMany(() => Document, (document) => document.parent)
+  children?: Document[];
 
   @Column({ type: 'int', default: -1 })
   userId: number;
