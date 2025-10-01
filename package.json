@@ -8,6 +8,9 @@
     "@biomejs/biome": "^1.9.4"
   },
   "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "db:up": "docker compose -f backend/docker-compose.yml up -d",
+    "db:down": "docker compose -f backend/docker-compose.yml down",
     "build": "pnpm -r run build",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
