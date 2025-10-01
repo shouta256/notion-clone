@@ -11,6 +11,7 @@ import { UserModule } from "./modules/user/user.module";
 
 @Module({
   imports: [
+    AppModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],

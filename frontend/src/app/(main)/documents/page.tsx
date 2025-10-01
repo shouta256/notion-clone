@@ -1,6 +1,6 @@
 "use client";
 
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@/components/icons";
 import { Box, Button, Center, Heading, Icon } from "@chakra-ui/react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";

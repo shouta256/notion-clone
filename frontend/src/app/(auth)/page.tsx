@@ -16,13 +16,13 @@ export default function Auth() {
 
   //ログインメソッド
   const handleLogin = async (email: string, password: string) => {
-    const user = await login(email, password);
+    await login(email, password);
     router.push("/documents");
   };
 
   //サインアップメソッド
   const handleSignup = async (userName: string, email: string, password: string) => {
-    const newUser = await signUp(userName, email, password);
+    await signUp(userName, email, password);
     router.push("/documents");
   };
 

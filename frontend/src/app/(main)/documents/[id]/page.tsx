@@ -10,7 +10,6 @@ import type { DocumentType } from "@/app/type";
 
 import { DocumentTitle } from "@/components/documentTitle";
 import { Editor } from "@/components/editor";
-import type { PartialBlock } from "@blocknote/core";
 
 //各ドキュメントを表示するページ
 export default function DocumentPage() {
@@ -28,17 +27,10 @@ export default function DocumentPage() {
     return <div>Loading...</div>;
   }
 
-  // Coerce unknown content to PartialBlock[] if it's an array of objects
-  const contentAsBlocks = Array.isArray(document?.content)
-    ? (document?.content.filter(
-        (b) => typeof b === "object" && b !== null,
-      ) as unknown as PartialBlock[])
-    : undefined;
-
   return (
     <Box margin="100px">
       {documentId && <DocumentTitle documentId={documentId} title={document?.title ?? ""} />}
-      <Editor documentId={documentId} initialContent={contentAsBlocks} />
+      <Editor documentId={documentId} initialContent={document?.content ?? undefined} />
     </Box>
   );
 }

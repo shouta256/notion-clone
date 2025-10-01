@@ -1,3 +1,4 @@
+import type { PartialBlock } from "@blocknote/core";
 export interface UserData {
   id: number;
   userName: string;
@@ -9,10 +10,10 @@ export interface UserData {
 export interface DocumentType {
   id: number;
   title: string;
-  parentDocumentId: number;
-  idArchive: boolean;
+  parentDocumentId: number | null;
+  isArchive: boolean;
   userId: number;
-  content: unknown;
+  content: PartialBlock[] | undefined;
 }
 
 export interface NestedDocuments {

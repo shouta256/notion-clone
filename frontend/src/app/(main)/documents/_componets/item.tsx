@@ -66,8 +66,9 @@ export const Item: React.FC<ItemProps> = ({
         </Flex>
         <Flex marginRight={2} justifyContent="flex-end" display={isHovered ? "flex" : "none"}>
           <Menu documentId={documentId} />
-          <AddIcon
-            marginLeft="2"
+          <Icon
+            as={AddIcon}
+            ml={2}
             onClick={(e) => {
               e.stopPropagation();
               handleAddIconClick();

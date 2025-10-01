@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@/components/icons";
 import { Button, Icon } from "@chakra-ui/react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";

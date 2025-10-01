@@ -1,23 +1,48 @@
-# Dependencies
+# Root gitignore for monorepo
+
+# Node / PNPM
 node_modules/
-
-# Build outputs
-dist/
-.next/
-build/
-coverage/
-.turbo/
-
-# Env
-.env
-.env.*
-
-# Logs
+**/node_modules/
+pnpm-debug.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Editor
+# OS
 .DS_Store
+**/.DS_Store
+
+# Env files
+.env
+.env*.local
+**/.env
+**/.env*.local
+
+# Build outputs / coverage
+dist/
+build/
+coverage/
+**/dist/
+**/build/
+**/coverage/
+*.tsbuildinfo
+
+# Next.js
+.next/
+**/.next/
+out/
+**/out/
+.vercel/
+**/.vercel/
+
+# IDE / Editor
+.idea/
 .vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Misc caches
+*.cache
+temp/
+tmp/
+**/.nyc_output
