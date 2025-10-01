@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import type { JwtService } from "@nestjs/jwt";
 import { compare } from "bcrypt";
 import type { Request } from "express";
 import type { User } from "src/entities/user.entity";
-import { UserService } from '../user/user.service';
+import type { UserService } from "../user/user.service";
 
 @Injectable()
 export class AuthService {

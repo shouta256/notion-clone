@@ -2,9 +2,6 @@
 import {
   Box,
   Button,
-  Spacer,
-  VStack,
-  useDisclosure,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -13,8 +10,11 @@ import {
   DrawerOverlay,
   List,
   ListItem,
+  Spacer,
   Spinner,
   Text,
+  VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
@@ -24,8 +24,8 @@ import { useEffect } from "react";
 import { getArchive, getDocuments, getUser } from "@/app/api";
 import type { DocumentType, NestedDocuments } from "@/app/type";
 
-import { DocumentList } from "./documentList";
 import { DeleteIcon } from "@/components/icons";
+import { DocumentList } from "./documentList";
 import { NewpageButton } from "./newpageButton";
 import { Profile } from "./profile";
 
@@ -42,12 +42,15 @@ export const Sidebar = () => {
     queryFn: () => getDocuments(),
   });
   const { data: documents } = documentsQueryResult;
-  const { data: archiveDocs, isLoading: isArchiveLoading, isError: isArchiveError } =
-    useQuery<DocumentType[]>({
-      queryKey: ["archive"],
-      queryFn: getArchive,
-      enabled: isOpen,
-    });
+  const {
+    data: archiveDocs,
+    isLoading: isArchiveLoading,
+    isError: isArchiveError,
+  } = useQuery<DocumentType[]>({
+    queryKey: ["archive"],
+    queryFn: getArchive,
+    enabled: isOpen,
+  });
 
   useEffect(() => {
     if (!user && !isLoading) {
