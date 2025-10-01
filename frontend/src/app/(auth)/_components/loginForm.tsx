@@ -54,7 +54,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onSwitchToSignup 
           Login
         </Button>
         <Text>
-          Don’t have an account? 
+          Don’t have an account?
           <button
             type="button"
             style={{

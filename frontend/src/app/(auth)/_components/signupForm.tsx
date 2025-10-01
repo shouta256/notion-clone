@@ -65,7 +65,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
           SignUp
         </Button>
         <Text>
-          Already have an account? 
+          Already have an account?
           <button
             type="button"
             style={{
