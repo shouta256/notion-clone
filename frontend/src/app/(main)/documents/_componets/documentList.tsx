@@ -5,7 +5,7 @@ import type { NestedDocuments } from "@/app/type";
 
 import { Item } from "./item";
 
-//ドキュメントの階層構造を再帰的に表示するコンポーネント
+// Component to show the document tree recursively
 export const DocumentList: React.FC<{ documents: NestedDocuments[] }> = ({ documents }) => {
   const router = useRouter();
 

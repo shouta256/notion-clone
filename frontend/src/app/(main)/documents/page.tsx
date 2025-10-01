@@ -1,6 +1,6 @@
 "use client";
 
-import { AddIcon } from "@/components/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import { Box, Button, Center, Heading, Icon } from "@chakra-ui/react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 
 import { createDocument } from "@/app/api";
 
-//ユーザがドキュメントを持っていないときに表示されるページ
-//新規ドキュメントを作成できる
+// Page shown when the user has no documents
+// You can create a new document here
 export default function DocumentsPage() {
   const router = useRouter();
 

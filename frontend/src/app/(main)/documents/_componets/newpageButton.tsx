@@ -1,11 +1,11 @@
-import { AddIcon } from "@/components/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import { Button, Icon } from "@chakra-ui/react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { createDocument } from "@/app/api";
 
-//サイドバーに表示する新規ページのボタンコンポーネント
+// New page button shown in the sidebar
 export const NewpageButton = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({

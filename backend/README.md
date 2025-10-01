@@ -1,93 +1,40 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+## Backend (NestJS)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is the API server.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Tech:
+- NestJS (TypeScript)
+- TypeORM + MySQL
+- JWT (cookie)
 
-## Description
+### How to run (dev)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+1) Install deps in repo root:
+- pnpm install
 
-## Installation
+2) Start database (Docker):
+- pnpm db:up
 
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Database (Docker)
-
-This project includes a docker-compose for MySQL. To avoid conflicts with local MySQL on 3306, the compose maps host 3307 -> container 3306.
-
-- Start DB (from repo root via pnpm):
-  - pnpm db:up
-
-- Connection details (used by ConfigService):
-  - host: localhost
-  - port: 3307
-  - user: test
-  - password: password
-  - database: test
-
-You can override via environment variables in `backend/.env.local`:
-
+3) Set env (optional). Create `backend/.env.local` to override defaults:
 ```
 DATABASE_HOST=localhost
 DATABASE_PORT=3307
 DATABASE_USER=test
 DATABASE_PASSWORD=password
 DATABASE_NAME=test
+JWT_SECRET=dev-secret
 ```
 
-## Test
+4) Start API:
+- pnpm --filter backend dev
 
-```bash
-# unit tests
-$ npm run test
+API runs on http://localhost:3001 (with /api prefix from the gateway).
 
-# e2e tests
-$ npm run test:e2e
+### Scripts
+- dev: start in watch mode
+- build: build the app
+- test: run unit tests
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Notes
+- MySQL runs on host port 3307 (mapped to container 3306). This avoids conflict with local MySQL.
+- Cookies store the JWT. CORS is set for local dev.

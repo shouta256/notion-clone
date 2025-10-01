@@ -11,7 +11,7 @@ import type { DocumentType } from "@/app/type";
 import { DocumentTitle } from "@/components/documentTitle";
 import { Editor } from "@/components/editor";
 
-//各ドキュメントを表示するページ
+// Page to show a single document
 export default function DocumentPage() {
   const param = useParams();
   const documentId = Number.parseInt(Array.isArray(param.id) ? param.id[0] : param.id, 10);

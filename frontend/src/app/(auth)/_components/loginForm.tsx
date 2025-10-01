@@ -11,7 +11,7 @@ interface LoginFormProps {
   onSwitchToSignup: () => void;
 }
 
-//ログイン用のコンポーネント
+// Login component
 export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onSwitchToSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +25,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onSwitchToSignup 
       setError("");
       await onLogin(email, password);
     } catch (error) {
-      setError("ユーザー名またはパスワードが正しくありません。");
+      setError("Email or password is incorrect.");
     } finally {
       setLoading(false);
     }
@@ -41,20 +41,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onSwitchToSignup 
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="メールアドレスを入力"
+          placeholder="Enter your email"
         />
         <InputField
           label="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="パスワードを入力"
+          placeholder="Enter your password"
         />
         <Button colorScheme="blue" onClick={handleLogin} isLoading={loading}>
-          ログイン
+          Login
         </Button>
         <Text>
-          アカウントをお持ちでない場合は、
+          Don’t have an account? 
           <button
             type="button"
             style={{
@@ -71,9 +71,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onSwitchToSignup 
               }
             }}
           >
-            こちら
+            Sign up
           </button>
-          から新規登録してください。
+          instead.
         </Text>
       </Stack>
     </Flex>

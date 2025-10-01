@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import type { JwtService } from "@nestjs/jwt";
+import { JwtService } from "@nestjs/jwt";
 import { compare } from "bcrypt";
 import type { Request } from "express";
 import type { User } from "src/entities/user.entity";
-import type { UserService } from "../user/user.service";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // ハッシュ化されたパスワードを検証する
+  // Verify a plain password against the hashed password
   public async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<void> {
     const authenticated = await compare(plainTextPassword, hashedPassword);
     if (!authenticated) {
@@ -20,7 +20,7 @@ export class AuthService {
     }
   }
 
-  // emailとpasswordから認証を行う
+  // Authenticate by email and password
   public async getAuthenticatedUser(email: string, plainTextPassword: string): Promise<User> {
     try {
       const user = await this.userService.getUserByEmail(email);
@@ -36,13 +36,13 @@ export class AuthService {
     }
   }
 
-  //トークンを作成
+  // Create a JWT token
   public createToken(payload: { userId: number }) {
     const token = this.jwtService.sign(payload);
     return token;
   }
 
-  //トークンからuserIdを取得する
+  // Get userId from a token
   async getUserIdFromToken(token: string): Promise<number | null> {
     try {
       const decoded = this.jwtService.verify(token);
@@ -53,7 +53,7 @@ export class AuthService {
     }
   }
 
-  //リクエストからトークンを取得してuserIdを返す（Cookie優先、なければAuthヘッダ）
+  // Get token from request and return userId (prefer Cookie, fallback to Authorization header)
   async getUserIdFromAuthHeader(req: Request): Promise<number> {
     // Cookie: Authentication
     const cookieHeader = req.headers.cookie;

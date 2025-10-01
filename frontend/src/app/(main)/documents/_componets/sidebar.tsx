@@ -29,14 +29,14 @@ import { DocumentList } from "./documentList";
 import { NewpageButton } from "./newpageButton";
 import { Profile } from "./profile";
 
-// ユーザ名、ドキュメントの階層を表示するコンポーネント
+// Component to show the user name and the document tree
 export const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // Cookieベースの認証に移行済みのため token は不要
+  // We use cookie-based auth now, so token is not needed
   const userQueryResult = useQuery({ queryKey: ["user"], queryFn: () => getUser() });
   const { data: user, isLoading } = userQueryResult;
 
-  // ドキュメントを取得
+  // Fetch documents
   const documentsQueryResult = useQuery<NestedDocuments[] | undefined>({
     queryKey: ["documentList"],
     queryFn: () => getDocuments(),
@@ -82,7 +82,7 @@ export const Sidebar = () => {
         )}
 
         <Spacer />
-        {/* 下部固定のゴミ箱ボタン */}
+        {/* Bottom fixed trash button */}
         <Box position="sticky" bottom="0" bg="gray.100" pt="2" pb="2">
           <Button
             leftIcon={<DeleteIcon size={18} />}
@@ -91,7 +91,7 @@ export const Sidebar = () => {
             justifyContent="flex-start"
             onClick={onOpen}
           >
-            ゴミ箱
+            Trash
           </Button>
         </Box>
       </VStack>
@@ -99,10 +99,10 @@ export const Sidebar = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>アーカイブ</DrawerHeader>
+          <DrawerHeader>Archive</DrawerHeader>
           <DrawerBody>
             {isArchiveLoading && <Spinner />}
-            {isArchiveError && <Text color="red.500">読み込みに失敗しました。</Text>}
+            {isArchiveError && <Text color="red.500">Failed to load.</Text>}
             {!isArchiveLoading && !isArchiveError && (
               <List spacing={2}>
                 {(archiveDocs ?? []).map((doc) => (
@@ -119,7 +119,7 @@ export const Sidebar = () => {
                     {doc.title}
                   </ListItem>
                 ))}
-                {(!archiveDocs || archiveDocs.length === 0) && <Text>アーカイブは空です</Text>}
+                {(!archiveDocs || archiveDocs.length === 0) && <Text>Archive is empty</Text>}
               </List>
             )}
           </DrawerBody>

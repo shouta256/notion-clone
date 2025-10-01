@@ -7,8 +7,8 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Document } from "src/entities/document.entity";
-import type { Repository } from "typeorm";
-import type { DocumentDataDTO } from "./documentDto/documentData.dto";
+import { Repository } from "typeorm";
+import { DocumentDataDTO } from "./documentDto/documentData.dto";
 
 @Injectable()
 export class DocumentService {
@@ -17,7 +17,7 @@ export class DocumentService {
     private readonly documentService: Repository<Document>,
   ) {}
 
-  // 所有者チェック（IDOR対策）
+  // Ownership check (prevent IDOR)
   async assertOwnership(documentId: number, userId: number): Promise<Document> {
     const document = await this.documentService.findOne({
       where: { id: documentId },
@@ -31,13 +31,13 @@ export class DocumentService {
     return document;
   }
 
-  //新規ドキュメントを作成する
+  // Create a new document
   async createDocument(document: Partial<Document>) {
     const createdDocument = await this.documentService.save(document as Document);
     return createdDocument;
   }
 
-  // ドキュメントを更新する
+  // Update a document
   async updateDocument(updatedDocumentData: Partial<Document>): Promise<Document> {
     if ("id" in updatedDocumentData) {
       const documentToUpdate = await this.documentService.findOne({
@@ -64,7 +64,7 @@ export class DocumentService {
     throw new Error("id must be provided");
   }
 
-  //ドキュメントIdからドキュメントを取得する
+  // Get a document by documentId
   async getDocumentByDocumentId(documentId: number): Promise<Document> {
     const document = await this.documentService.findOne({
       where: { id: documentId },
@@ -77,7 +77,7 @@ export class DocumentService {
     return document;
   }
 
-  //アーカイブされていないuserIdと一致するドキュメントを探し、階層構造で渡す
+  // Find non-archived documents by userId and return as a tree
   async getDocumentsByUserId(userId: number): Promise<DocumentDataDTO[]> {
     const documents = await this.documentService.find({
       where: { userId: userId, isArchive: false },
@@ -87,7 +87,7 @@ export class DocumentService {
       throw new NotFoundException("Document not found");
     }
 
-    // ドキュメントをツリー形式に変換するための再帰的な関数
+  // Helper: build a tree from flat documents (recursive)
     const buildTree = (documents: Document[]): DocumentDataDTO[] => {
       const tree: DocumentDataDTO[] = [];
       const map: Record<number, DocumentDataDTO> = {};
@@ -111,7 +111,7 @@ export class DocumentService {
     return buildTree(documents);
   }
 
-  //parentIdに一致する子のドキュメントを探す（ユーザー制限付き）
+  // Find children by parentId (scoped by user)
   async getDocumentsByParentId(parentDocumentId: number, userId: number): Promise<Document[]> {
     const documents = await this.documentService.find({
       where: { parentDocumentId: parentDocumentId, userId },
@@ -124,7 +124,7 @@ export class DocumentService {
     return documents;
   }
 
-  //ドキュメントをアーカイブする
+  // Archive a document
   async moveToArchive(documentId: number): Promise<Document> {
     const document = await this.documentService.findOne({
       where: { id: documentId },
@@ -134,24 +134,24 @@ export class DocumentService {
       throw new NotFoundException("Document not found");
     }
 
-    document.isArchive = true; // ドキュメントをアーカイブする
-    const archivedDocument = await this.documentService.save(document); // ドキュメントを保存して返す
+  document.isArchive = true; // Mark as archived
+  const archivedDocument = await this.documentService.save(document); // Save and return
 
     return archivedDocument;
   }
 
-  //ドキュメントとその子を全てアーカイブする
+  // Archive the document and all its children
   async moveToArchiveRecursive(documentId: number, userId: number): Promise<void> {
-    await this.moveToArchive(documentId); // ドキュメントをアーカイブする
+    await this.moveToArchive(documentId); // Archive current
 
-    // 子ドキュメントを取得して再帰的にアーカイブする
+    // Get children and archive recursively
     const childDocuments = await this.getDocumentsByParentId(documentId, userId);
     for (const childDocument of childDocuments) {
       await this.moveToArchiveRecursive(childDocument.id, userId);
     }
   }
 
-  //ドキュメントをリストアする
+  // Restore a document
   async moveToRestore(documentId: number): Promise<Document> {
     const document = await this.documentService.findOne({
       where: { id: documentId },
@@ -167,18 +167,18 @@ export class DocumentService {
     return archivedDocument;
   }
 
-  //ドキュメントとその子を全てリストアする
+  // Restore the document and all its children
   async moveToRestoreRecursive(documentId: number, userId: number): Promise<void> {
-    await this.moveToRestore(documentId); // ドキュメントをリストアする
+    await this.moveToRestore(documentId); // Restore current
 
-    // 子ドキュメントを取得して再帰的にリストアする
+    // Get children and restore recursively
     const childDocuments = await this.getDocumentsByParentId(documentId, userId);
     for (const childDocument of childDocuments) {
       await this.moveToRestoreRecursive(childDocument.id, userId);
     }
   }
 
-  // アーカイブのドキュメントを取得
+  // Get archived documents
   async getArchive(userId: number): Promise<Document[]> {
     if (!userId) {
       throw new Error("Invalid user ID.");
@@ -193,7 +193,7 @@ export class DocumentService {
     }
   }
 
-  //アーカイブのドキュメントを削除
+  // Delete archived document(s)
   async deleteArchive(documentId: number): Promise<Document> {
     try {
       const docRepo = this.documentService;

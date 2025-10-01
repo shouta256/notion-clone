@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable */
 
 import { Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
 
@@ -11,7 +12,7 @@ interface SignupFormProps {
   onSwitchToLogin: () => void;
 }
 
-//サインアップ用コンポーネント
+// Signup component
 export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogin }) => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,27 +45,27 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
           type="name"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
-          placeholder="ユーザ名を入力"
+          placeholder="Enter your user name"
         />
         <InputField
           label="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="メールアドレスを入力"
+          placeholder="Enter your email"
         />
         <InputField
           label="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="パスワードを入力"
+          placeholder="Enter your password"
         />
         <Button colorScheme="blue" onClick={handleLogin} isLoading={loading}>
           SignUp
         </Button>
         <Text>
-          アカウントをお持ちの場合は、
+          Already have an account? 
           <button
             type="button"
             style={{
@@ -81,9 +82,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
               }
             }}
           >
-            こちら
+            Log in
           </button>
-          から新規登録してください。
+          instead.
         </Text>
       </Stack>
     </Flex>

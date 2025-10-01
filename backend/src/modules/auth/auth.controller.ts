@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import type { Request, Response } from "express";
 import type { User } from "src/entities/user.entity";
-import type { AuthService } from "./auth.service";
+import { AuthService } from "./auth.service";
 import JwtAuthenticationGuard from "./jwtAuthentication.guard";
 import { LocalAuthenticationGuard } from "./localAuthentication.guard";
 

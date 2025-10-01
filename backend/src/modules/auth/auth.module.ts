@@ -23,7 +23,7 @@ import { LocalStrategy } from "./local.strategy";
     }),
   ],
   controllers: [AuthController],
-  //JwtStrategyを追加
+  // Add JwtStrategy
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })

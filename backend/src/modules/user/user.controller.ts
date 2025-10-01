@@ -12,9 +12,9 @@ import {
 import type { Request } from "express";
 import type { User } from "src/entities/user.entity";
 import JwtAuthenticationGuard from "../auth/jwtAuthentication.guard";
-import type { CreateUserDto } from "./dto/create-user.dto";
-import type { UpdateUserDto } from "./dto/update-user.dto";
-import type { UserService } from "./user.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserService } from "./user.service";
 
 interface RequestWithUser extends Request {
   user: User;

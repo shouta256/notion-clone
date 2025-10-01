@@ -13,6 +13,8 @@ import { UserModule } from "./modules/user/user.module";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // Load local overrides first, then default .env
+      envFilePath: [".env.local", ".env"],
       load: [config],
     }),
     TypeOrmModule.forRootAsync({

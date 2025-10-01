@@ -15,12 +15,12 @@ import {
 import type { Request } from "express";
 import type { Document } from "src/entities/document.entity";
 // import { AuthGuard } from '@nestjs/passport';
-import type { AuthService } from "../auth/auth.service";
+import { AuthService } from "../auth/auth.service";
 import JwtAuthenticationGuard from "../auth/jwtAuthentication.guard";
-import type { DocumentService } from "./document.service";
-import type { DocumentDataDTO } from "./documentDto/documentData.dto";
-import type { CreateDocumentDto } from "./dto/create-document.dto";
-import type { UpdateDocumentDto } from "./dto/update-document.dto";
+import { DocumentService } from "./document.service";
+import { DocumentDataDTO } from "./documentDto/documentData.dto";
+import { CreateDocumentDto } from "./dto/create-document.dto";
+import { UpdateDocumentDto } from "./dto/update-document.dto";
 
 @Controller("document")
 export class DocumentController {
@@ -29,7 +29,7 @@ export class DocumentController {
     private authService: AuthService,
   ) {}
 
-  //新規ドキュメントを作成
+  // Create a new document
   @UseGuards(JwtAuthenticationGuard)
   @Post("/")
   async createDocument(@Body() document: CreateDocumentDto, @Req() req: Request) {
@@ -39,7 +39,7 @@ export class DocumentController {
     return await this.documentService.createDocument(documentToCreate);
   }
 
-  //ドキュメントを更新
+  // Update a document
   @UseGuards(JwtAuthenticationGuard)
   @Patch("/")
   async updateDocument(@Body() document: UpdateDocumentDto, @Req() req: Request) {
@@ -53,7 +53,7 @@ export class DocumentController {
     return await this.documentService.updateDocument(documentToUpdate);
   }
 
-  //userIdからドキュメントを階層構造で取得
+  // Get documents by userId as a tree
   @UseGuards(JwtAuthenticationGuard)
   @Get("/")
   async getDocumentsByUserId(@Req() req: Request): Promise<DocumentDataDTO[]> {
@@ -64,7 +64,7 @@ export class DocumentController {
     return this.documentService.getDocumentsByUserId(userId);
   }
 
-  //parentIdから子ドキュメントを取得
+  // Get children by parentId
   @UseGuards(JwtAuthenticationGuard)
   @Get("getChildren/:parentDocumentId?")
   async getChildByParentId(
@@ -75,7 +75,7 @@ export class DocumentController {
     return this.documentService.getDocumentsByParentId(parentDocumentId, userId);
   }
 
-  //アーカイブのドキュメントを取得
+  // Get archived documents
   @UseGuards(JwtAuthenticationGuard)
   @Get("archive")
   async getArchive(@Req() req: Request): Promise<Document[]> {
@@ -83,7 +83,7 @@ export class DocumentController {
     return this.documentService.getArchive(userId);
   }
 
-  //ドキュメントとその子を全てアーカイブする
+  // Archive the document and all its children
   @UseGuards(JwtAuthenticationGuard)
   @Put("archive/:documentId")
   async moveToArchive(
@@ -104,7 +104,7 @@ export class DocumentController {
     return await this.documentService.deleteArchive(documentId);
   }
 
-  //ドキュメントとその子を全てリストアする
+  // Restore the document and all its children
   @UseGuards(JwtAuthenticationGuard)
   @Patch("restore/:documentId")
   async moveToRecover(
@@ -117,7 +117,7 @@ export class DocumentController {
     return await this.documentService.getDocumentsByUserId(userId);
   }
 
-  //ドキュメントIdからドキュメントを取得
+  // Get a document by documentId
   @UseGuards(JwtAuthenticationGuard)
   @Get(":documentId")
   async getDocumentById(
