@@ -45,6 +45,30 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Database (Docker)
+
+This project includes a docker-compose for MySQL. To avoid conflicts with local MySQL on 3306, the compose maps host 3307 -> container 3306.
+
+- Start DB (from repo root via pnpm):
+  - pnpm db:up
+
+- Connection details (used by ConfigService):
+  - host: localhost
+  - port: 3307
+  - user: test
+  - password: password
+  - database: test
+
+You can override via environment variables in `backend/.env.local`:
+
+```
+DATABASE_HOST=localhost
+DATABASE_PORT=3307
+DATABASE_USER=test
+DATABASE_PASSWORD=password
+DATABASE_NAME=test
+```
+
 ## Test
 
 ```bash
