@@ -25,7 +25,6 @@ export const Profile = ({ userName }: ProfileProps) => {
 
   //ログアウトメソッド
   const handleLogOutClick = () => {
-    localStorage.setItem("token", "");
     router.push("/");
   };
   return (

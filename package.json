@@ -9,6 +9,8 @@
   },
   "scripts": {
     "lint": "biome check .",
-    "lint:fix": "biome check --write ."
+    "lint:fix": "biome check --write .",
+    "build": "pnpm -w --filter ./backend... run build && pnpm -w --filter ./frontend... run build",
+    "dev": "pnpm -C backend run _dev & pnpm -C frontend run _dev"
   }
 }
