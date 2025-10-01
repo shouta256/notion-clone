@@ -15,12 +15,12 @@ import {
 import type { Request } from "express";
 import type { Document } from "src/entities/document.entity";
 // import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from "../auth/auth.service";
+import type { AuthService } from "../auth/auth.service";
 import JwtAuthenticationGuard from "../auth/jwtAuthentication.guard";
-import { DocumentService } from "./document.service";
-import { DocumentDataDTO } from "./documentDto/documentData.dto";
-import { CreateDocumentDto } from "./dto/create-document.dto";
-import { UpdateDocumentDto } from "./dto/update-document.dto";
+import type { DocumentService } from "./document.service";
+import type { DocumentDataDTO } from "./documentDto/documentData.dto";
+import type { CreateDocumentDto } from "./dto/create-document.dto";
+import type { UpdateDocumentDto } from "./dto/update-document.dto";
 
 @Controller("document")
 export class DocumentController {

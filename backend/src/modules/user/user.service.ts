@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { genSalt, hash } from "bcrypt";
 import { User } from "src/entities/user.entity";
-import { Repository } from "typeorm";
+import type { Repository } from "typeorm";
 
 @Injectable()
 export class UserService {
@@ -27,7 +27,7 @@ export class UserService {
         throw new BadRequestException("Password is required");
       }
 
-  // Check if the email already exists
+      // Check if the email already exists
       const existingUser = await this.userRepository.findOne({
         where: { email: user.email },
       });
@@ -43,9 +43,9 @@ export class UserService {
       });
       return createdUser;
     } catch (error) {
-  // Handle errors with more details
+      // Handle errors with more details
       if (error.status === 409) {
-  // When ConflictException is thrown
+        // When ConflictException is thrown
         throw error;
       }
 
@@ -79,7 +79,7 @@ export class UserService {
   async getById(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-  throw new UnauthorizedException("User does not exist");
+      throw new UnauthorizedException("User does not exist");
     }
     return user;
   }

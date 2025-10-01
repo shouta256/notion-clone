@@ -7,8 +7,8 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Document } from "src/entities/document.entity";
-import { Repository } from "typeorm";
-import { DocumentDataDTO } from "./documentDto/documentData.dto";
+import type { Repository } from "typeorm";
+import type { DocumentDataDTO } from "./documentDto/documentData.dto";
 
 @Injectable()
 export class DocumentService {
@@ -87,7 +87,7 @@ export class DocumentService {
       throw new NotFoundException("Document not found");
     }
 
-  // Helper: build a tree from flat documents (recursive)
+    // Helper: build a tree from flat documents (recursive)
     const buildTree = (documents: Document[]): DocumentDataDTO[] => {
       const tree: DocumentDataDTO[] = [];
       const map: Record<number, DocumentDataDTO> = {};
@@ -134,8 +134,8 @@ export class DocumentService {
       throw new NotFoundException("Document not found");
     }
 
-  document.isArchive = true; // Mark as archived
-  const archivedDocument = await this.documentService.save(document); // Save and return
+    document.isArchive = true; // Mark as archived
+    const archivedDocument = await this.documentService.save(document); // Save and return
 
     return archivedDocument;
   }
