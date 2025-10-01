@@ -12,9 +12,13 @@ import {
 import type { Request } from "express";
 import type { User } from "src/entities/user.entity";
 import JwtAuthenticationGuard from "../auth/jwtAuthentication.guard";
-import type { CreateUserDto } from "./dto/create-user.dto";
-import type { UpdateUserDto } from "./dto/update-user.dto";
-import type { UserService } from "./user.service";
+// Use value imports so Nest can reflect runtime types for DI and validation
+// biome-ignore lint/style/useImportType: DTO classes must be runtime imports for ValidationPipe
+import { CreateUserDto } from "./dto/create-user.dto";
+// biome-ignore lint/style/useImportType: DTO classes must be runtime imports for ValidationPipe
+import { UpdateUserDto } from "./dto/update-user.dto";
+// biome-ignore lint/style/useImportType: Service must be runtime import for DI metadata
+import { UserService } from "./user.service";
 
 interface RequestWithUser extends Request {
   user: User;
