@@ -4,6 +4,8 @@ import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // All routes will start with /api to match frontend baseURL
+  app.setGlobalPrefix("api");
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -20,6 +22,7 @@ async function bootstrap() {
     "https://localhost:3000",
     process.env.FRONTEND_ORIGIN, // optional env override
   ].filter(Boolean) as string[];
+  const isDev = process.env.NODE_ENV !== "production";
 
   app.enableCors({
     origin: (origin, callback) => {
@@ -27,7 +30,10 @@ async function bootstrap() {
       if (!origin) {
         return callback(null, true);
       }
-      if (allowedOrigins.includes(origin)) {
+      if (
+        allowedOrigins.includes(origin) ||
+        (isDev && (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")))
+      ) {
         return callback(null, true);
       }
       return callback(new Error(`Not allowed by CORS: ${origin}`), false);

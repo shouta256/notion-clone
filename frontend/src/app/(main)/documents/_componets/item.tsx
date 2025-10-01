@@ -2,7 +2,6 @@ import { createDocument } from "@/app/api";
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Box, Flex, Icon, Text, useBoolean } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { Menu } from "./menu";
 
 interface ItemProps {
@@ -33,6 +32,7 @@ export const Item: React.FC<ItemProps> = ({
     await mutation.mutateAsync();
     setExpanded(true);
   };
+
   return (
     <Box
       margin="1"
@@ -43,10 +43,13 @@ export const Item: React.FC<ItemProps> = ({
       onMouseLeave={setIsHovered.off}
       _hover={{ cursor: "pointer", bg: "gray.200" }}
     >
-      <Flex justifyContent="space-between" alignItems="center" width="100%">
-        <Flex alignItems="center" flex="1" width="80%">
+      <Flex alignItems="center" width="100%" justifyContent="space-between">
+        {/* Left: caret + truncated title */}
+        <Flex alignItems="center" flex="1" minW={0} pr={2}>
           <Icon
             as={expanded ? ChevronDownIcon : ChevronRightIcon}
+            flexShrink={0}
+            mr={1}
             onClick={(e) => {
               e.stopPropagation();
               setExpanded(!expanded);
@@ -56,7 +59,6 @@ export const Item: React.FC<ItemProps> = ({
             marginLeft="2"
             fontWeight="500"
             isTruncated
-            maxWidth="80%"
             overflow="hidden"
             whiteSpace="nowrap"
             textOverflow="ellipsis"
@@ -64,11 +66,18 @@ export const Item: React.FC<ItemProps> = ({
             {title}
           </Text>
         </Flex>
-        <Flex marginRight={2} justifyContent="flex-end" display={isHovered ? "flex" : "none"}>
+
+        {/* Right: actions (reserve space, don't shrink) */}
+        <Flex
+          marginRight={2}
+          justifyContent="flex-end"
+          visibility={isHovered ? "visible" : "hidden"}
+          flexShrink={0}
+          gap={2}
+        >
           <Menu documentId={documentId} />
           <Icon
             as={AddIcon}
-            ml={2}
             onClick={(e) => {
               e.stopPropagation();
               handleAddIconClick();

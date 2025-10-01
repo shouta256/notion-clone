@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import config from '../config/configuration';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
-import { DocumentModule } from './modules/document/document.module';
-import { UserModule } from './modules/user/user.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import config from "../config/configuration";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { AuthModule } from "./modules/auth/auth.module";
+import { DocumentModule } from "./modules/document/document.module";
+import { UserModule } from "./modules/user/user.module";
 // Removed custom CorsMiddleware; using app.enableCors in main.ts
 
 @Module({
@@ -18,13 +18,14 @@ import { UserModule } from './modules/user/user.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-  type: 'mysql',
-  host: configService.get('database.host'),
-  port: configService.get('database.port'),
-  username: configService.get('database.username'),
-  password: configService.get('database.password'),
-  database: configService.get('database.name'),
+        type: "mysql",
+        host: configService.get("database.host"),
+        port: configService.get("database.port"),
+        username: configService.get("database.username"),
+        password: configService.get("database.password"),
+        database: configService.get("database.name"),
         autoLoadEntities: true,
+        synchronize: process.env.NODE_ENV !== "production",
       }),
       inject: [ConfigService],
     }),

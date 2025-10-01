@@ -1,14 +1,18 @@
 import axios from "axios";
 import type { DocumentType, NestedDocuments, UserData } from "./type";
 
+// Normalize backend URL so we don't depend on trailing slash configuration in env files
+const rawBackendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+const normalizedBackendUrl = rawBackendUrl.endsWith("/") ? rawBackendUrl : `${rawBackendUrl}/`;
+
 const axiosInstance = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}api/`,
+  baseURL: `${normalizedBackendUrl}api/`,
   withCredentials: true,
 });
 
 export const login = async (email: string, password: string): Promise<UserData> => {
   const inputData = { email: email, password: password };
-  const response = await axiosInstance.post("/auth/login", inputData);
+  const response = await axiosInstance.post("auth/login", inputData);
   return response.data;
 };
 
