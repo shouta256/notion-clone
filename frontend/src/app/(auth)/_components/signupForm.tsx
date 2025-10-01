@@ -27,8 +27,23 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
       setError("");
       await onSignup(userName, email, password);
     } catch (error: unknown) {
-      const axiosLike = error as { response?: { data?: { message?: string } } } | undefined;
-      const message = axiosLike?.response?.data?.message ?? "An unexpected error occurred";
+      // Support NestJS ValidationPipe responses where message can be string | string[]
+      const axiosLike = error as { response?: { data?: unknown } } | undefined;
+      const data = axiosLike?.response?.data as
+        | { message?: string | string[] }
+        | string
+        | undefined;
+      let message = "An unexpected error occurred";
+      if (typeof data === "string") {
+        message = data;
+      } else if (data && typeof data === "object") {
+        const m = (data as { message?: string | string[] }).message;
+        if (Array.isArray(m)) {
+          message = m.join("\n");
+        } else if (typeof m === "string") {
+          message = m;
+        }
+      }
       setError(message);
     } finally {
       setLoading(false);
@@ -59,7 +74,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSignup, onSwitchToLogi
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          placeholder="Enter your password (min 8 characters)"
         />
         <Button colorScheme="blue" onClick={handleLogin} isLoading={loading}>
           SignUp
