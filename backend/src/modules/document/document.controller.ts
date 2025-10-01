@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   ParseIntPipe,
   Patch,
@@ -15,18 +16,23 @@ import {
 import type { Request } from "express";
 import type { Document } from "src/entities/document.entity";
 // import { AuthGuard } from '@nestjs/passport';
-import type { AuthService } from "../auth/auth.service";
+// biome-ignore lint/style/useImportType: Service must be runtime import for DI metadata
+import { AuthService } from "../auth/auth.service";
 import JwtAuthenticationGuard from "../auth/jwtAuthentication.guard";
-import type { DocumentService } from "./document.service";
-import type { DocumentDataDTO } from "./documentDto/documentData.dto";
-import type { CreateDocumentDto } from "./dto/create-document.dto";
-import type { UpdateDocumentDto } from "./dto/update-document.dto";
+// biome-ignore lint/style/useImportType: Service must be runtime import for DI metadata
+import { DocumentService } from "./document.service";
+// biome-ignore lint/style/useImportType: DTO classes must be runtime for ValidationPipe
+import { DocumentDataDTO } from "./documentDto/documentData.dto";
+// biome-ignore lint/style/useImportType: DTO classes must be runtime for ValidationPipe
+import { CreateDocumentDto } from "./dto/create-document.dto";
+// biome-ignore lint/style/useImportType: DTO classes must be runtime for ValidationPipe
+import { UpdateDocumentDto } from "./dto/update-document.dto";
 
 @Controller("document")
 export class DocumentController {
   constructor(
-    private readonly documentService: DocumentService,
-    private authService: AuthService,
+    @Inject(DocumentService) private readonly documentService: DocumentService,
+    @Inject(AuthService) private authService: AuthService,
   ) {}
 
   // Create a new document

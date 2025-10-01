@@ -8,7 +8,8 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Document } from "src/entities/document.entity";
 import type { Repository } from "typeorm";
-import type { DocumentDataDTO } from "./documentDto/documentData.dto";
+// biome-ignore lint/style/useImportType: DTOs should be runtime if referenced in code paths
+import { DocumentDataDTO } from "./documentDto/documentData.dto";
 
 @Injectable()
 export class DocumentService {

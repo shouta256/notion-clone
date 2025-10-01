@@ -1,15 +1,17 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import type { JwtService } from "@nestjs/jwt";
+import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+// biome-ignore lint/style/useImportType: JwtService must be a runtime import for DI metadata
+import { JwtService } from "@nestjs/jwt";
 import { compare } from "bcrypt";
 import type { Request } from "express";
 import type { User } from "src/entities/user.entity";
-import type { UserService } from "../user/user.service";
+// biome-ignore lint/style/useImportType: Service must be a runtime import for DI metadata
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    @Inject(UserService) private readonly userService: UserService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
   ) {}
 
   // Verify a plain password against the hashed password

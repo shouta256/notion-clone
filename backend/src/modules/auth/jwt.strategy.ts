@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import type { ConfigService } from "@nestjs/config";
+import { Inject, Injectable } from "@nestjs/common";
+// biome-ignore lint/style/useImportType: ConfigService must be runtime import for DI metadata
+import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import type { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import type { User } from "src/entities/user.entity";
-import type { UserService } from "../user/user.service";
+// biome-ignore lint/style/useImportType: Service must be runtime import for DI metadata
+import { UserService } from "../user/user.service";
 
 interface JWTPayload {
   userId: User["id"];
@@ -13,8 +15,8 @@ interface JWTPayload {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly configService: ConfigService,
-    private readonly userService: UserService,
+    @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(UserService) private readonly userService: UserService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
